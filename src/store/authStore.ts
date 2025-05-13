@@ -7,7 +7,7 @@ interface AuthState {
   session: any;
   loading: boolean;
   initialized: boolean;
-  signUp: (email: string, password: string, name: string, inviteCode?: string) => Promise<{ success: boolean; error?: string }>;
+  signUp: (email: string, password: string, name: string, inviteCode?: string, whatsapp?: string) => Promise<{ success: boolean; error?: string }>;
   signIn: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   signOut: () => Promise<void>;
   updateUserProfile: (updates: Partial<User>) => Promise<{ success: boolean; error?: string }>;
@@ -63,7 +63,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  signUp: async (email, password, name, inviteCode) => {
+  signUp: async (email, password, name, inviteCode, whatsapp) => {
     set({ loading: true });
     try {
       let groupId = null;
@@ -107,6 +107,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         options: {
           data: {
             name,
+            whatsapp,
             invite_code: groupCodeUsed || null, // <-- store the group code used for signup
           }
         }
@@ -118,6 +119,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           id: data.user.id,
           name,
           email,
+          whatsapp,
           invite_code: groupCodeUsed || null, // <-- store the group code used for signup
           referred_by: inviterId,
         });
@@ -265,7 +267,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             name,
             email,
             status,
-            created_at
+            created_at,
+            whatsapp
           )
         `)
         .eq('group_id', groupId);

@@ -31,6 +31,7 @@ const MemberInfoModal: React.FC<MemberInfoModalProps> = ({ isOpen, member, loadi
             <div><span className="font-medium">Email:</span> {member.email}</div>
             <div><span className="font-medium">Status:</span> {member.status}</div>
             <div><span className="font-medium">Joined:</span> {member.created_at ? new Date(member.created_at).toLocaleDateString() : '-'}</div>
+            <div><span className="font-medium">WhatsApp:</span> {member.whatsapp || '-'}</div>
             {/* Add more fields as needed */}
           </div>
         ) : (

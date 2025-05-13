@@ -9,6 +9,7 @@ export type User = {
   status: 'pending' | 'active';
   current_level: number;
   created_at: string;
+  whatsapp?: string;
 };
 
 export type Group = {

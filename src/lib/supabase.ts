@@ -28,7 +28,7 @@ export async function getUserByInviteCode(inviteCode: string) {
 export async function getUserById(userId: string) {
   const { data, error } = await supabase
     .from('users')
-    .select('*')
+    .select('id, name, email, role, referred_by, invite_code, pack_type, status, current_level, created_at, whatsapp')
     .eq('id', userId)
     .single();
 
@@ -93,7 +93,7 @@ export async function getUserWithGroups(userId: string) {
 export async function getPendingVerifications() {
   const { data, error } = await supabase
     .from('users')
-    .select('*')
+    .select('id, name, email, role, referred_by, invite_code, pack_type, status, current_level, created_at, whatsapp')
     .eq('status', 'pending')
     .order('created_at', { ascending: false });
 
@@ -196,7 +196,7 @@ export async function getGroupMembers(groupId: string) {
     .from('invites')
     .select(`
       *,
-      referred_user:referred_user_id(id, name, email, status, created_at)
+      referred_user:referred_user_id(id, name, email, status, created_at, whatsapp)
     `)
     .eq('group_id', groupId);
 
@@ -254,6 +254,19 @@ export async function confirmGroupMember(inviteId: string) {
     console.error('Error confirming group member:', error);
     return false;
   }
+
+  // Fetch the invite to get the referred_user_id
+  const { data: invite } = await supabase
+    .from('invites')
+    .select('referred_user_id')
+    .eq('id', inviteId)
+    .single();
+
+  if (invite?.referred_user_id) {
+    // Try to create group for this user (in case they are now eligible)
+    await createGroupIfNeeded(invite.referred_user_id);
+  }
+
   return true;
 }
 

@@ -18,6 +18,7 @@ const Register: React.FC = () => {
   const [inviteCode, setInviteCode] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [whatsapp, setWhatsapp] = useState('');
   
   // Extract invite code from URL if present
   useEffect(() => {
@@ -47,11 +48,18 @@ const Register: React.FC = () => {
       toast.error('Password must be at least 6 characters');
       return;
     }
+
+    // Validate Moroccan WhatsApp number: starts with +212 or 0, followed by 9 digits
+    const moroccoRegex = /^(?:\+212|0)([ \-]?\d){9}$/;
+    if (!moroccoRegex.test(whatsapp)) {
+      toast.error('Please enter a valid Moroccan WhatsApp number (e.g. +212612345678 or 0612345678)');
+      return;
+    }
     
     setLoading(true);
     
     try {
-      const { success, error } = await signUp(email, password, name, inviteCode);
+      const { success, error } = await signUp(email, password, name, inviteCode, whatsapp);
       
       if (success) {
         toast.success('Registration successful!');
@@ -176,6 +184,24 @@ const Register: React.FC = () => {
               onChange={(e) => setInviteCode(e.target.value)}
               className="input"
               placeholder="Enter invite code if you have one"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="whatsapp" className="block text-sm font-medium text-gray-700">
+            WhatsApp Number
+          </label>
+          <div className="mt-1">
+            <input
+              id="whatsapp"
+              name="whatsapp"
+              type="text"
+              required
+              value={whatsapp}
+              onChange={(e) => setWhatsapp(e.target.value)}
+              className="input"
+              placeholder="Enter your WhatsApp number"
             />
           </div>
         </div>

@@ -11,6 +11,7 @@ interface Member {
   created_at: string;
   owner_confirmed?: boolean;
   invite_id?: string;
+  whatsapp?: string;
 }
 
 interface MembersListProps {
@@ -62,6 +63,7 @@ const MembersList: React.FC<MembersListProps> = ({
                 <div className="ml-4">
                   <div className="text-sm font-medium text-gray-900">{member.name}</div>
                   <div className="text-sm text-gray-500">{member.email}</div>
+                  <div className="text-sm text-gray-500">{member.whatsapp ? `WhatsApp: ${member.whatsapp}` : ''}</div>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
