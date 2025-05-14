@@ -11,6 +11,9 @@ import Groups from './pages/User/Groups';
 import Invite from './pages/User/Invite';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 import Settings from './pages/User/Settings';
+import VerifyUsers from './pages/Admin/VerifyUsers';
+import GroupsRepair from './pages/Admin/GroupsRepair';
+import Users from './pages/Admin/Users';
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ 
@@ -23,6 +26,11 @@ const ProtectedRoute: React.FC<{
 
   if (!user && requireAuth) {
     return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  // If admin, redirect to /admin unless already on an admin route
+  if (user?.role === 'admin' && !location.pathname.startsWith('/admin')) {
+    return <Navigate to="/admin" replace />;
   }
 
   if (requireAdmin && (!user || user.role !== 'admin')) {
@@ -116,7 +124,17 @@ function App() {
       } />
       <Route path="/admin/verify" element={
         <ProtectedRoute requireAdmin>
-          <AdminDashboard />
+          <VerifyUsers />
+        </ProtectedRoute>
+      } />
+      <Route path="/admin/groups-repair" element={
+        <ProtectedRoute requireAdmin>
+          <GroupsRepair />
+        </ProtectedRoute>
+      } />
+      <Route path="/admin/users" element={
+        <ProtectedRoute requireAdmin>
+          <Users />
         </ProtectedRoute>
       } />
 

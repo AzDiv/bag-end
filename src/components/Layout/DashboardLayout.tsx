@@ -11,7 +11,8 @@ import {
   Menu, 
   X, 
   Shield,
-  BarChart3
+  BarChart3,
+  Wrench
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import clsx from 'clsx';
@@ -26,22 +27,18 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const isAdmin = user?.role === 'admin';
-
-  const userNavigation = [
+  const navigation = user?.role === 'admin' ? [
+    { name: 'Dashboard', icon: BarChart3, href: '/admin' },
+    { name: 'Verify Users', icon: Shield, href: '/admin/verify' },
+    { name: 'Groups Repair', icon: Wrench, href: '/admin/groups-repair' },
+    { name: 'Users', icon: Users, href: '/admin/users' },
+    // Removed Settings from admin navigation
+  ] : [
     { name: 'Dashboard', icon: Home, href: '/dashboard' },
     { name: 'My Groups', icon: Users, href: '/groups' },
     { name: 'Invite Members', icon: UserPlus, href: '/invite' },
     { name: 'Settings', icon: Settings, href: '/settings' },
   ];
-
-  const adminNavigation = [
-    { name: 'Dashboard', icon: BarChart3, href: '/admin' },
-    { name: 'Verify Users', icon: Shield, href: '/admin/verify' },
-    { name: 'Settings', icon: Settings, href: '/settings' },
-  ];
-
-  const navigation = isAdmin ? adminNavigation : userNavigation;
 
   const handleSignOut = async () => {
     await signOut();
@@ -92,7 +89,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   </Link>
                 </div>
                 <nav className="mt-5 px-2 space-y-1">
-                  {navigation.map((item) => (
+                  {navigation.map((item: { name: string; icon: any; href: string }) => (
                     <Link
                       key={item.name}
                       to={item.href}
@@ -155,7 +152,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 </Link>
               </div>
               <nav className="mt-5 flex-1 px-2 space-y-1">
-                {navigation.map((item) => (
+                {navigation.map((item: { name: string; icon: any; href: string }) => (
                   <Link
                     key={item.name}
                     to={item.href}

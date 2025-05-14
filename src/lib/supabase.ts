@@ -428,3 +428,43 @@ export async function findUsersMissingNextGroup() {
 
   return eligibleUsers;
 }
+
+export async function getRecentAdminLogs() {
+  // Fetch recent user verifications and rejections (status transitions)
+  const { data: users, error: usersError } = await supabase
+    .from('users')
+    .select('id, name, email, status, created_at')
+    .order('created_at', { ascending: false })
+    .limit(40);
+
+  // Only include users who are currently 'active' or 'rejected'
+  const userLogs = (users || [])
+    .filter(u => u.status === 'active' || u.status === 'rejected')
+    .map(u => ({
+      timestamp: u.created_at || '',
+      message: u.status === 'active'
+        ? `User ${u.name || ''} (${u.email || ''}) was verified.`
+        : `User ${u.name || ''} (${u.email || ''}) was rejected.`,
+      level: u.status === 'active' ? 'info' : 'warning',
+    }));
+
+  // Fetch recent group creations
+  const { data: groups, error: groupsError } = await supabase
+    .from('groups')
+    .select('id, code, group_number, created_at, owner_id')
+    .order('created_at', { ascending: false })
+    .limit(10);
+
+  const groupLogs = (groups || []).map(g => ({
+    timestamp: g.created_at || '',
+    message: `Group #${g.group_number} (code: ${g.code}) was created.`,
+    level: 'info',
+  }));
+
+  // Combine and sort by timestamp descending
+  const logs = [...userLogs, ...groupLogs].sort(
+    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  );
+
+  return logs;
+}
