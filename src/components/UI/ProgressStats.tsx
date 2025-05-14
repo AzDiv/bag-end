@@ -26,47 +26,47 @@ const ProgressStats: React.FC<ProgressStatsProps> = ({ user }) => {
       name: 'Total Members',
       value: members,
       icon: Users,
-      color: 'bg-blue-100 text-blue-600'
+      color: 'bg-primary-light text-primary-dark'
     },
     {
       name: 'Verified Members',
       value: verifiedMembers,
       icon: UserCheck,
-      color: 'bg-green-100 text-green-600'
+      color: 'bg-success text-success'
     },
     {
       name: 'Current Level',
       value: currentLevel,
       icon: Target,
-      color: 'bg-purple-100 text-purple-600'
+      color: 'bg-secondary-light text-secondary-dark'
     },
     {
       name: 'Next Level In',
       value: `${nextLevelNeeded} members`,
       icon: Award,
-      color: 'bg-yellow-100 text-yellow-600'
+      color: 'bg-secondary-light text-secondary-dark'
     }
   ];
 
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden">
-      <div className="px-6 py-5 border-b border-gray-200">
-        <h3 className="text-lg font-medium text-gray-900">Your Progress</h3>
-        <p className="mt-1 text-sm text-gray-500">
+    <div className="bg-card rounded-xl shadow-md overflow-hidden">
+      <div className="px-6 py-5 border-b border-secondary">
+        <h3 className="text-lg font-medium text-text-primary">Your Progress</h3>
+        <p className="mt-1 text-sm text-text-secondary">
           Track your growth and achievements
         </p>
       </div>
       
       <div className="px-6 py-5">
         <div className="flex items-center mb-1">
-          <span className="text-sm font-medium text-gray-700">
+          <span className="text-sm font-medium text-text-secondary">
             Level Progress ({currentLevel}/{maxLevel})
           </span>
-          <span className="ml-auto text-sm font-medium text-gray-500">
+          <span className="ml-auto text-sm font-medium text-text-secondary">
             {Math.round(levelProgress)}%
           </span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2.5">
+        <div className="w-full bg-secondary rounded-full h-2.5">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${levelProgress}%` }}
@@ -82,14 +82,14 @@ const ProgressStats: React.FC<ProgressStatsProps> = ({ user }) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: idx * 0.1 }}
-              className="flex items-center p-4 bg-gray-50 rounded-lg"
+              className="flex items-center p-4 bg-secondary-light rounded-lg"
             >
               <div className={`p-2 rounded-lg ${stat.color}`}>
                 <stat.icon className="h-5 w-5" />
               </div>
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-500">{stat.name}</p>
-                <p className="text-lg font-semibold text-gray-900">{stat.value}</p>
+                <p className="text-sm font-medium text-text-secondary">{stat.name}</p>
+                <p className="text-lg font-semibold text-text-primary">{stat.value}</p>
               </div>
             </motion.div>
           ))}

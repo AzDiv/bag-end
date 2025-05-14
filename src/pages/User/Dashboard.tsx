@@ -161,12 +161,9 @@ const Dashboard: React.FC = () => {
                         const group = userData.groups?.find(g => g.group_number === groupNumber);
                         const packType = user?.pack_type || 'starter';
                         // Define levels and amounts
-                        const starterLevels = [10, 20, 30];
-                        const goldLevels = [10, 20, 30];
                         const starterAmounts = ['$10', '$20', '$30'];
                         const goldAmounts = ['$50', '$100', '$200'];
                         const isGold = packType === 'gold';
-                        const level = isGold ? goldLevels[idx] : starterLevels[idx];
                         const amount = isGold ? goldAmounts[idx] : starterAmounts[idx];
 
                         if (group) {
@@ -178,6 +175,7 @@ const Dashboard: React.FC = () => {
                               memberCount={group.members ?? 0}
                               verifiedCount={group.verified_members ?? 0}
                               onShareLink={handleShareGroup}
+                              packType={packType}
                             />
                           );
                         } else {
@@ -192,7 +190,7 @@ const Dashboard: React.FC = () => {
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 11V7a4 4 0 10-8 0v4M6 15v2a2 2 0 002 2h8a2 2 0 002-2v-2M6 15h12" />
                                 </svg>
                               </div>
-                              <div className="text-2xl font-bold text-gray-500 mb-2">Level {level} Group</div>
+                              <div className="text-2xl font-bold text-gray-500 mb-2">Level {groupNumber} Group</div>
                               <div className="text-lg text-gray-400 mb-4">{amount}</div>
                               <div className="text-gray-400">Locked</div>
                             </div>

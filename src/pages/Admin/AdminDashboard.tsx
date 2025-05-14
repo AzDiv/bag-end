@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
 import { useAuthStore } from '../../store/authStore';
-import { getDashboardStats, getPendingVerifications, updateUserStatus } from '../../lib/supabase';
+import { getDashboardStats, getPendingVerifications, updateUserStatus, createNextGroupIfEligible, findUsersMissingNextGroup, getUserById } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 import { User, AdminDashboardStats } from '../../types/database.types';
 import { Users, UserCheck, Target, Award, CheckCircle, XCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -13,6 +14,8 @@ const AdminDashboard: React.FC = () => {
   const [pendingUsers, setPendingUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
+  const [missingGroups, setMissingGroups] = useState<any[]>([]);
+  const [checkingMissing, setCheckingMissing] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,19 +43,31 @@ const AdminDashboard: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleVerification = async (userId: string, status: 'active' | 'pending') => {
+  const handleVerification = async (userId: string, status: 'active' | 'pending' | 'rejected') => {
     setProcessingIds(prev => new Set(prev).add(userId));
-    
     try {
       const success = await updateUserStatus(userId, status);
-      
+
       if (success) {
         setPendingUsers(prev => prev.filter(user => user.id !== userId));
-        toast.success(`User ${status === 'active' ? 'verified' : 'rejected'} successfully`);
-        
-        // Refresh stats
-        const newStats = await getDashboardStats();
-        setStats(newStats);
+        toast.success(`User ${status === 'active' ? 'verified' : status === 'rejected' ? 'rejected' : 'set to pending'} successfully`);
+
+        // --- ADD THIS: If user is now active, check if their inviter (group owner) is eligible for next group ---
+        if (status === 'active') {
+          // Fetch the user to get their invite_code
+          const user = await getUserById(userId);
+          if (user?.invite_code) {
+            // Find the group owner by invite_code
+            const { data: group } = await supabase
+              .from('groups')
+              .select('owner_id')
+              .eq('code', user.invite_code)
+              .single();
+            if (group?.owner_id) {
+              await createNextGroupIfEligible(group.owner_id);
+            }
+          }
+        }
       } else {
         throw new Error('Failed to update user status');
       }
@@ -66,6 +81,20 @@ const AdminDashboard: React.FC = () => {
         return newSet;
       });
     }
+  };
+
+  const handleCheckMissingGroups = async () => {
+    setCheckingMissing(true);
+    const result = await findUsersMissingNextGroup();
+    setMissingGroups(result);
+    setCheckingMissing(false);
+  };
+
+  const handleFixGroup = async (userId: string) => {
+    await createNextGroupIfEligible(userId);
+    toast.success('Next group created (if eligible)');
+    // Optionally refresh missingGroups
+    handleCheckMissingGroups();
   };
 
   if (!user || user.role !== 'admin') {
@@ -229,7 +258,7 @@ const AdminDashboard: React.FC = () => {
                                 Verify
                               </button>
                               <button
-                                onClick={() => handleVerification(user.id, 'pending')}
+                                onClick={() => handleVerification(user.id, 'rejected')}
                                 disabled={processingIds.has(user.id)}
                                 className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                               >
@@ -244,6 +273,36 @@ const AdminDashboard: React.FC = () => {
                   </table>
                 )}
               </div>
+            </div>
+
+            <div className="mb-6">
+              <button
+                className="btn btn-primary"
+                onClick={handleCheckMissingGroups}
+                disabled={checkingMissing}
+              >
+                {checkingMissing ? 'Checking...' : 'Check for Missing Groups'}
+              </button>
+              {missingGroups.length > 0 && (
+                <div className="mt-4 bg-yellow-50 p-4 rounded">
+                  <h4 className="font-semibold mb-2">Users missing next group:</h4>
+                  <ul>
+                    {missingGroups.map(u => (
+                      <li key={u.userId} className="mb-2 flex items-center justify-between">
+                        <span>
+                          {u.name} ({u.email}) - Last Group: {u.lastGroupNumber}, Verified: {u.verifiedCount}
+                        </span>
+                        <button
+                          className="btn btn-success ml-4"
+                          onClick={() => handleFixGroup(u.userId)}
+                        >
+                          Create Next Group
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
         )}

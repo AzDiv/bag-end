@@ -32,6 +32,26 @@ const MemberInfoModal: React.FC<MemberInfoModalProps> = ({ isOpen, member, loadi
             <div><span className="font-medium">Status:</span> {member.status}</div>
             <div><span className="font-medium">Joined:</span> {member.created_at ? new Date(member.created_at).toLocaleDateString() : '-'}</div>
             <div><span className="font-medium">WhatsApp:</span> {member.whatsapp || '-'}</div>
+            {member.status === 'pending' && (
+              <div className="text-xs text-yellow-600 mt-2">
+                This member is waiting for admin verification.
+              </div>
+            )}
+            {member.status === 'active' && member.owner_confirmed && (
+              <div className="text-xs text-green-600 mt-2">
+                This member is fully verified and confirmed. They count towards your group progression.
+              </div>
+            )}
+            {member.status === 'active' && !member.owner_confirmed && (
+              <div className="text-xs text-blue-600 mt-2">
+                This member is verified by admin. Please confirm them to count towards your group progression.
+              </div>
+            )}
+            {member.status === 'rejected' && (
+              <div className="text-xs text-red-600 mt-2">
+                This member was rejected and does not count towards group progression.
+              </div>
+            )}
             {/* Add more fields as needed */}
           </div>
         ) : (

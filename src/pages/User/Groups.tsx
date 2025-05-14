@@ -158,7 +158,7 @@ const Groups: React.FC = () => {
                             </div>
                             <div className="ml-3">
                               <h4 className="font-medium text-gray-900">
-                                Level {group.group_number * 10} Group
+                                Level {group.group_number} Group
                               </h4>
                               <p className="text-sm text-gray-500">Code: {group.code}</p>
                             </div>
@@ -226,23 +226,31 @@ const Groups: React.FC = () => {
                                   style={{ left: `${x}px`, top: `${y}px` }}
                                   onClick={() => handleMemberClick(member.id)}
                                 >
-                                  <div className={`w-18 h-18 rounded-full flex items-center justify-center shadow-md border-4 ${member.owner_confirmed ? 'border-green-400 bg-green-50' : 'border-gray-300 bg-gray-100'} cursor-pointer hover:scale-105 transition-transform`}>
-                                    <Users className={`h-8 w-8 ${member.owner_confirmed ? 'text-green-600' : 'text-gray-500'}`} />
+                                  <div className={`w-18 h-18 rounded-full flex items-center justify-center shadow-md border-4 ${member.owner_confirmed ? 'border-green-400 bg-green-50' : member.status === 'rejected' ? 'border-red-400 bg-red-50' : 'border-gray-300 bg-gray-100'} cursor-pointer hover:scale-105 transition-transform`}>
+                                    <Users className={`h-8 w-8 ${member.owner_confirmed ? 'text-green-600' : member.status === 'rejected' ? 'text-red-500' : 'text-gray-500'}`} />
                                   </div>
                                   <span className="text-xs mt-1 mb-1 text-gray-700 truncate max-w-[100px] text-center">{member.name}</span>
-                                  {member.owner_confirmed && (
+                                  {member.status === 'rejected' ? (
+                                    <span className="text-red-500 text-xs font-semibold whitespace-nowrap mt-1 flex items-center">
+                                      <svg className="h-3 w-3 mr-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 5.636l-12.728 12.728M5.636 5.636l12.728 12.728" />
+                                      </svg>
+                                      Rejected
+                                    </span>
+                                  ) : member.owner_confirmed ? (
                                     <span className="text-green-500 text-xs font-semibold whitespace-nowrap mt-1">✔ Confirmed</span>
-                                  )}
-                                  {!member.owner_confirmed && user && groups.find(g => g.id === selectedGroup)?.owner_id === user.id && (
-                                    <button
-                                      className="mt-1 px-2 py-1 text-xs bg-primary text-white rounded hover:bg-primary-dark whitespace-nowrap"
-                                      onClick={e => {
-                                        e.stopPropagation();
-                                        handleConfirmMember(member.invite_id);
-                                      }}
-                                    >
-                                      Confirm
-                                    </button>
+                                  ) : (
+                                    user && groups.find(g => g.id === selectedGroup)?.owner_id === user.id && (
+                                      <button
+                                        className="mt-1 px-2 py-1 text-xs bg-primary text-white rounded hover:bg-primary-dark whitespace-nowrap"
+                                        onClick={e => {
+                                          e.stopPropagation();
+                                          handleConfirmMember(member.invite_id);
+                                        }}
+                                      >
+                                        Confirm
+                                      </button>
+                                    )
                                   )}
                                 </div>
                               );

@@ -5,24 +5,38 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#6366F1',
-          dark: '#4F46E5',
-          light: '#818CF8',
+          DEFAULT: 'var(--primary)',
+          dark: 'var(--primary-dark)',
+          light: 'var(--primary-light)',
         },
         secondary: {
-          DEFAULT: '#F59E0B',
-          dark: '#D97706',
-          light: '#FBBF24',
+          DEFAULT: 'var(--secondary)',
+          dark: 'var(--secondary-dark)',
+          light: 'var(--secondary-light)',
+        },
+        accent: {
+          DEFAULT: 'var(--accent)',
         },
         success: {
-          DEFAULT: '#10B981',
-          dark: '#059669',
-          light: '#34D399',
+          DEFAULT: 'var(--success)',
+        },
+        warning: {
+          DEFAULT: 'var(--warning)',
         },
         error: {
-          DEFAULT: '#EF4444',
-          dark: '#DC2626',
-          light: '#F87171',
+          DEFAULT: 'var(--error)',
+        },
+        background: {
+          DEFAULT: 'var(--background)',
+        },
+        card: {
+          DEFAULT: 'var(--card)',
+        },
+        'text-primary': {
+          DEFAULT: 'var(--text-primary)',
+        },
+        'text-secondary': {
+          DEFAULT: 'var(--text-secondary)',
         },
       },
       animation: {

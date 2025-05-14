@@ -76,10 +76,17 @@ export async function getUserWithGroups(userId: string) {
         .select('id', { count: 'exact', head: true })
         .eq('invite_code', group.code)
         .eq('status', 'active');
+      // Count users who joined with this group's code but are not rejected
+      const { count: groupUserCount, error: groupUserCountError } = await supabase
+        .from('users')
+        .select('id', { count: 'exact', head: true })
+        .eq('invite_code', group.code)
+        .neq('status', 'rejected');
       return {
         ...group,
         members: membersCount || 0,
         verified_members: verifiedCount || 0,
+        groupUserCount: groupUserCount || 0,
       };
     })
   );
@@ -105,7 +112,7 @@ export async function getPendingVerifications() {
   return data;
 }
 
-export async function updateUserStatus(userId: string, status: 'pending' | 'active') {
+export async function updateUserStatus(userId: string, status: 'pending' | 'active' | 'rejected') {
   const { error } = await supabase
     .from('users')
     .update({ status })
@@ -357,4 +364,67 @@ export async function createNextGroupIfEligible(userId: string) {
   }
 
   return false;
+}
+
+/**
+ * Returns a list of users who are eligible for the next group but don't have it yet.
+ */
+export async function findUsersMissingNextGroup() {
+  // Get all users who are active
+  const { data: users, error: usersError } = await supabase
+    .from('users')
+    .select('id, name, email, status')
+    .eq('status', 'active');
+
+  if (usersError || !users) return [];
+
+  const eligibleUsers: any[] = [];
+
+  for (const user of users) {
+    // Get all groups for user
+    const { data: groups } = await supabase
+      .from('groups')
+      .select('*')
+      .eq('owner_id', user.id)
+      .order('group_number', { ascending: true });
+
+    if (!groups || groups.length === 0) continue;
+
+    const lastGroup = groups[groups.length - 1];
+    const nextGroupNumber = lastGroup.group_number + 1;
+
+    // Only allow up to 3 groups
+    if (groups.length >= 3) continue;
+
+    // Check if next group already exists
+    if (groups.some(g => g.group_number === nextGroupNumber)) continue;
+
+    // Count verified & owner_confirmed members in last group
+    const { data: inviteRows } = await supabase
+      .from('invites')
+      .select('referred_user_id, owner_confirmed, users:referred_user_id(status)')
+      .eq('group_id', lastGroup.id)
+      .eq('owner_confirmed', true);
+
+    const verifiedCount = (inviteRows || []).filter(row => {
+      if (Array.isArray(row.users)) {
+        return row.users[0]?.status === 'active';
+      } else if (row.users) {
+        return (row.users as any).status === 'active';
+      }
+      return false;
+    }).length;
+
+    if (verifiedCount >= 4) {
+      eligibleUsers.push({
+        userId: user.id,
+        name: user.name,
+        email: user.email,
+        lastGroupNumber: lastGroup.group_number,
+        verifiedCount,
+      });
+    }
+  }
+
+  return eligibleUsers;
 }

@@ -6,7 +6,7 @@ export type User = {
   referred_by: string | null;
   invite_code: string;
   pack_type: 'starter' | 'gold' | null;
-  status: 'pending' | 'active';
+  status: 'pending' | 'active' | 'rejected';
   current_level: number;
   created_at: string;
   whatsapp?: string;

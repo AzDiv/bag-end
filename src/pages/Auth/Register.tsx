@@ -55,6 +55,11 @@ const Register: React.FC = () => {
       toast.error('Please enter a valid Moroccan WhatsApp number (e.g. +212612345678 or 0612345678)');
       return;
     }
+
+    if (!inviteCode) {
+      toast.error('Invite code is required');
+      return;
+    }
     
     setLoading(true);
     
@@ -173,7 +178,7 @@ const Register: React.FC = () => {
 
         <div>
           <label htmlFor="inviteCode" className="block text-sm font-medium text-gray-700">
-            Invite Code (Optional)
+            Invite Code <span className="text-red-500">*</span>
           </label>
           <div className="mt-1">
             <input
@@ -183,7 +188,8 @@ const Register: React.FC = () => {
               value={inviteCode}
               onChange={(e) => setInviteCode(e.target.value)}
               className="input"
-              placeholder="Enter invite code if you have one"
+              placeholder="Enter invite code"
+              required // <-- make it required
             />
           </div>
         </div>

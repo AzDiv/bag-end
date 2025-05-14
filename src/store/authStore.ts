@@ -66,6 +66,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   signUp: async (email, password, name, inviteCode, whatsapp) => {
     set({ loading: true });
     try {
+      if (!inviteCode) {
+        set({ loading: false });
+        return {
+          success: false,
+          error: 'Invite code is required.'
+        };
+      }
       let groupId = null;
       let inviterId = null;
       let groupCodeUsed = null;
@@ -85,11 +92,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           const { count: groupUserCount, error: groupUserCountError } = await supabase
             .from('users')
             .select('id', { count: 'exact', head: true })
-            .eq('invite_code', group.code);
+            .eq('invite_code', group.code)
+            .neq('status', 'rejected'); // <-- Only count non-rejected users
 
           if (groupUserCountError) throw groupUserCountError;
 
-          // Block sign up if group already has 4 users
+          // Block sign up if group already has 4 non-rejected users
           if ((groupUserCount ?? 0) >= 4) {
             set({ loading: false });
             return {
