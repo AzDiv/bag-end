@@ -38,7 +38,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
   if (packType === 'gold') {
     badgeValue = group.group_number === 1 ? '50$' : group.group_number === 2 ? '100$' : group.group_number === 3 ? '200$' : '';
   } else {
-    badgeValue = group.group_number === 1 ? '10$' : group.group_number === 2 ? '20$' : group.group_number === 3 ? '30$' : '';
+    badgeValue = group.group_number === 1 ? '5$' : group.group_number === 2 ? '10$' : group.group_number === 3 ? '20$' : '';
   }
 
   return (

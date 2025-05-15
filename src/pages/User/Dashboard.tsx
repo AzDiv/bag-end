@@ -8,7 +8,8 @@ import GroupCard from '../../components/UI/GroupCard';
 import ShareModal from '../../components/UI/ShareModal';
 import { getUserWithGroups } from '../../lib/supabase';
 import { UserWithGroupDetails, Group } from '../../types/database.types';
-import { Share2 } from 'lucide-react';
+import { AlertCircle, InfoIcon, CheckCircle, Link2, AlertTriangle } from 'lucide-react';
+import PaymentInstructions from '../../components/UI/PaymentInstruction'; 
 
 const Dashboard: React.FC = () => {
   const { user, refreshUser } = useAuthStore();
@@ -69,57 +70,86 @@ const Dashboard: React.FC = () => {
   if (user && user.pack_type && user.status === 'pending') {
     return (
       <DashboardLayout>
-        <div className="max-w-6xl mx-auto py-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">Verification Pending</h1>
+        <div className="min-h-[calc(100vh-80px)] py-8 px-4">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-xl shadow-md overflow-hidden"
+            className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-7 gap-8"
           >
-            <div className="p-6">
-              <div className="flex items-center mb-6">
-                <div className="p-3 bg-yellow-100 rounded-full">
-                  <Share2 className="h-6 w-6 text-yellow-600" />
-                </div>
-                <div className="ml-4">
-                  <h2 className="text-xl font-semibold text-gray-800">
-                    Your Account is Pending Verification
-                  </h2>
-                  <p className="text-gray-600">
-                    We've received your plan selection and are waiting for payment confirmation.
-                  </p>
-                </div>
+            {/* Section principale */}
+            <div className="lg:col-span-4 bg-white rounded-xl shadow-md overflow-hidden">
+              <div className="border-b border-gray-100 px-6 py-4">
+                <h1 className="text-xl font-bold text-gray-900">Vérification en cours</h1>
               </div>
               
-              <div className="bg-blue-50 p-4 rounded-lg mb-6">
-                <h3 className="font-medium text-blue-800 mb-2">Next Steps:</h3>
-                <ol className="list-decimal list-inside text-blue-700 space-y-2">
-                  <li>Send your payment using one of the methods below</li>
-                  <li>Submit proof of payment via Telegram or WhatsApp</li>
-                  <li>Wait for admin verification (usually within 24 hours)</li>
-                  <li>Once verified, you'll gain access to your group and features</li>
-                </ol>
+              <div className="p-6">
+                <div className="flex items-start mb-6">
+                  <div className="p-3 bg-yellow-100 rounded-full flex-shrink-0">
+                    <AlertCircle className="h-6 w-6 text-yellow-600" />
+                  </div>
+                  <div className="ml-4">
+                    <h2 className="text-xl font-semibold text-gray-800">
+                      Votre compte est en attente de vérification
+                    </h2>
+                    <p className="text-gray-600 mt-1">
+                      Nous avons bien reçu votre sélection de plan et attendons la confirmation de votre paiement.
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="bg-blue-50 p-5 rounded-lg mb-6 border border-blue-100">
+                  <h3 className="font-medium text-blue-800 mb-3 flex items-center">
+                    <InfoIcon className="h-5 w-5 mr-2" />
+                    Prochaines étapes:
+                  </h3>
+                  <ol className="list-decimal list-inside text-blue-700 space-y-3 pl-1">
+                    <li className="pb-2 border-b border-blue-100">Envoyez votre paiement en utilisant l'une des méthodes ci-dessous</li>
+                    <li className="pb-2 border-b border-blue-100">Soumettez une preuve de paiement via Telegram ou WhatsApp</li>
+                    <li className="pb-2 border-b border-blue-100">Attendez la vérification de l'administrateur (généralement sous 24 heures)</li>
+                    <li>Une fois vérifié, vous aurez accès à votre groupe et à toutes les fonctionnalités</li>
+                  </ol>
+                </div>
+                
+                <div className="border-t border-gray-200 pt-6">
+                  <h3 className="text-lg font-medium text-gray-800 mb-4 flex items-center">
+                    <Link2 className="h-5 w-5 mr-2 text-gray-500" />
+                    Contactez-nous pour finaliser votre inscription:
+                  </h3>
+                  <div className="flex flex-wrap gap-4">
+                    <a 
+                      href="https://t.me/boombag2025" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="btn bg-[#0088cc] text-white hover:bg-[#0077b5] focus:ring-blue-500 flex items-center"
+                    >
+                      <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.069l-1.68 8.057c-.133.644-.489.8-.989.498L11 13.117l-2.125 2.058c-.235.237-.432.434-.887.434l.307-4.378 7.968-7.194c.346-.307-.075-.478-.532-.172L5.412 10.17l-2.247-.745c-.49-.158-.497-.479.109-.711l17.764-6.84c.424-.175.81.106.656.564z" />
+                      </svg>
+                      Contacter via Telegram
+                    </a>
+                  </div>
+                </div>
               </div>
-              
-              <div className="border-t border-gray-200 pt-6">
-                <h3 className="text-lg font-medium text-gray-800 mb-4">Payment Methods:</h3>
-                <div className="flex flex-wrap gap-4">
-                  <a 
-                    href="https://t.me/boombag2025" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="btn bg-[#0088cc] text-white hover:bg-[#0077b5] focus:ring-blue-500"
-                  >
-                    Submit via Telegram
-                  </a>
-                  {/*<a 
-                    href="https://wa.me/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="btn bg-[#25D366] text-white hover:bg-[#128C7E] focus:ring-green-500"
-                  >
-                    Submit via WhatsApp
-                  </a>*/}
+            </div>
+            
+            {/* Section latérale avec instructions de paiement */}
+            <div className="lg:col-span-3">
+              <div className="bg-white rounded-xl shadow-md overflow-hidden sticky top-20">
+                <div className="border-b border-gray-100 px-6 py-4">
+                  <h2 className="text-lg font-semibold text-gray-800">Instructions de paiement</h2>
+                </div>
+                
+                <div className="p-6">
+                  <PaymentInstructions />
+                  
+                  <div className="mt-6 pt-6 border-t border-gray-100">
+                    <div className="flex items-center p-4 bg-yellow-50 rounded-lg">
+                      <AlertTriangle className="h-5 w-5 text-yellow-500 mr-3 flex-shrink-0" />
+                      <p className="text-sm text-yellow-700">
+                        Après le paiement, envoyez une capture d'écran de votre preuve de paiement à notre équipe via Telegram.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
