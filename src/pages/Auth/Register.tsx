@@ -69,6 +69,7 @@ const Register: React.FC = () => {
       
       if (success) {
         toast.success('Registration successful!');
+        window.open('https://t.me/boombag2025', '_blank'); // Redirection Telegram
         navigate('/dashboard');
       } else {
         throw new Error(error);
