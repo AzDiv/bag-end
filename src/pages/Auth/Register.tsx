@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Eye, EyeOff } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import AuthLayout from '../../components/Layout/AuthLayout';
+import PaymentInstructions from '../../components/UI/PaymentInstruction';
 import toast from 'react-hot-toast';
 
 const Register: React.FC = () => {
@@ -210,6 +211,10 @@ const Register: React.FC = () => {
               placeholder="Enter your WhatsApp number"
             />
           </div>
+        </div>
+
+        <div className="mb-6">
+          <PaymentInstructions />
         </div>
 
         <div>
