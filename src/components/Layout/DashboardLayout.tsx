@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Layers, 
+import logoo from '../../assets/logo-boombag.png';
+import {  
   Home, 
   Users, 
   UserPlus, 
@@ -82,10 +82,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
                 <div className="flex-shrink-0 flex items-center px-4">
                   <Link to="/" className="flex items-center">
-                    <div className="p-2 bg-primary rounded-lg">
-                      <Layers className="h-6 w-6 text-white" />
+                    <div>
+                      <img src={logoo} alt="Boom Bag Logo" className="h-12" />
                     </div>
-                    <span className="ml-2 text-xl font-bold text-gray-900">Boom Bag</span>
                   </Link>
                 </div>
                 <nav className="mt-5 px-2 space-y-1">
@@ -145,10 +144,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
               <div className="flex items-center flex-shrink-0 px-4">
                 <Link to="/" className="flex items-center">
-                  <div className="p-2 bg-primary rounded-lg">
-                    <Layers className="h-6 w-6 text-white" />
+                  <div>
+                    <img src={logoo} alt="Boom Bag Logo" className="h-12" />
                   </div>
-                  <span className="ml-2 text-xl font-bold text-gray-900">Boom Bag</span>
                 </Link>
               </div>
               <nav className="mt-5 flex-1 px-2 space-y-1">

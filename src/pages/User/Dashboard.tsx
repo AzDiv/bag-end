@@ -105,21 +105,21 @@ const Dashboard: React.FC = () => {
                 <h3 className="text-lg font-medium text-gray-800 mb-4">Payment Methods:</h3>
                 <div className="flex flex-wrap gap-4">
                   <a 
-                    href="https://t.me/boombag_support" 
+                    href="https://t.me/boombag2025" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="btn bg-[#0088cc] text-white hover:bg-[#0077b5] focus:ring-blue-500"
                   >
                     Submit via Telegram
                   </a>
-                  <a 
-                    href="https://wa.me/1234567890" 
+                  {/*<a 
+                    href="https://wa.me/" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="btn bg-[#25D366] text-white hover:bg-[#128C7E] focus:ring-green-500"
                   >
                     Submit via WhatsApp
-                  </a>
+                  </a>*/}
                 </div>
               </div>
             </div>

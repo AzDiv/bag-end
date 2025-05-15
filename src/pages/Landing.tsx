@@ -2,8 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import logo from '../assets/logo-boombag-white.png';
-import { 
-  Layers, 
+import {  
   ChevronRight, 
   Users, 
   TrendingUp, 
@@ -15,7 +14,7 @@ const Landing: React.FC = () => {
   return (
     <div className="bg-card min-h-screen">
       {/* Header */}
-      <header className="bg-gradient-to-r from-primary to-primary-dark shadow-md sticky top-0 z-30">
+      <header className="bg-gradient-to-r from-primary-dark to-primary shadow-md sticky top-0 z-30">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <img
@@ -42,7 +41,7 @@ const Landing: React.FC = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-primary to-primary-dark text-white py-20 relative overflow-hidden">
+      <section className="bg-gradient-to-b from-primary-dark to-primary text-white py-20 relative overflow-hidden">
         {/* Decorative shapes */}
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-secondary opacity-10 rounded-full blur-2xl z-0" />
         <div className="absolute bottom-0 right-0 w-56 h-56 bg-primary-light opacity-10 rounded-full blur-2xl z-0" />
@@ -260,10 +259,11 @@ const Landing: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center mb-6 md:mb-0">
-              <div className="p-2 bg-card rounded-lg shadow-md">
-                <Layers className="h-6 w-6 text-primary" />
-              </div>
-              <span className="ml-2 text-xl font-bold tracking-wide">Boom Bag</span>
+              <img
+                src={logo}
+                alt="Boom Bag Logo"
+                className="h-10 w-auto drop-shadow-md"
+              />
             </div>
             <div className="flex space-x-6">
               <Link to="/terms" className="text-text-secondary hover:text-white transition-colors duration-150">
