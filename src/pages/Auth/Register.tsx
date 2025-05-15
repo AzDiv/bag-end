@@ -69,7 +69,11 @@ const Register: React.FC = () => {
       
       if (success) {
         toast.success('Registration successful!');
-        window.open('https://t.me/boombag2025', '_blank'); // Redirection Telegram
+        const telegramMessage = encodeURIComponent(
+        `Bonjour, je viens de m'inscrire. Je suis ${name}, mon numéro WhatsApp est ${whatsapp} et mon email est ${email}.`
+        );
+        // Redirection vers Telegram avec le message préformaté
+        window.open(`https://t.me/boombag2025?text=${telegramMessage}`, '_blank');
         navigate('/dashboard');
       } else {
         throw new Error(error);
