@@ -173,8 +173,6 @@ const Dashboard: React.FC = () => {
           <>
             {userData && (
               <div className="space-y-6">
-                {/* Progress Stats */}
-                <ProgressStats user={userData} />
                 
                 {/* Groups */}
                 <div className="bg-white rounded-xl shadow-md overflow-hidden">
@@ -230,6 +228,10 @@ const Dashboard: React.FC = () => {
                     </div>
                   </div>
                 </div>
+                
+                {/* Progress Stats */}
+                <ProgressStats user={userData} />
+
               </div>
             )}
           </>
