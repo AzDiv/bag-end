@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import logo from '../assets/logo-boombag-white.png';
 import { 
   Layers, 
   ChevronRight, 
@@ -14,24 +15,26 @@ const Landing: React.FC = () => {
   return (
     <div className="bg-card min-h-screen">
       {/* Header */}
-      <header className="bg-gradient-to-r from-primary to-primary-dark">
+      <header className="bg-gradient-to-r from-primary to-primary-dark shadow-md sticky top-0 z-30">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center">
-            <div className="p-2 bg-card rounded-lg">
-              <Layers className="h-6 w-6 text-primary" />
-            </div>
-            <span className="ml-2 text-xl font-bold text-white">Boom Bag</span>
+          <div className="flex items-center gap-3">
+            <img
+              src={logo}
+              alt="Boom Bag Logo"
+              className="h-10 w-auto drop-shadow-md"
+            />
+            <span className="hidden sm:inline text-white text-lg font-bold tracking-wide ml-2">Boom Bag</span>
           </div>
           <div className="space-x-2">
             <Link
               to="/login"
-              className="px-4 py-2 text-white hover:text-white/90"
+              className="px-4 py-2 text-white hover:text-white/90 transition-colors duration-150"
             >
               Login
             </Link>
             <Link
               to="/register"
-              className="px-4 py-2 bg-card text-primary rounded-md hover:bg-secondary-light"
+              className="px-4 py-2 bg-card text-primary rounded-md hover:bg-secondary-light shadow-sm transition-colors duration-150"
             >
               Sign Up
             </Link>
@@ -40,8 +43,11 @@ const Landing: React.FC = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-primary to-primary-dark text-white py-20">
-        <div className="container mx-auto px-4">
+      <section className="bg-gradient-to-b from-primary to-primary-dark text-white py-20 relative overflow-hidden">
+        {/* Decorative shapes */}
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-secondary opacity-10 rounded-full blur-2xl z-0" />
+        <div className="absolute bottom-0 right-0 w-56 h-56 bg-primary-light opacity-10 rounded-full blur-2xl z-0" />
+        <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col lg:flex-row items-center">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
@@ -49,23 +55,23 @@ const Landing: React.FC = () => {
               transition={{ duration: 0.6 }}
               className="lg:w-1/2 mb-10 lg:mb-0"
             >
-              <h1 className="text-4xl sm:text-5xl font-bold mb-4">
+              <h1 className="text-4xl sm:text-5xl font-bold mb-4 drop-shadow-lg">
                 Progress Together, Earn Together
               </h1>
-              <p className="text-lg sm:text-xl mb-8 text-primary-light">
+              <p className="text-lg sm:text-xl mb-8 text-primary-light max-w-lg">
                 Join Boom Bag and be part of a thriving community where your network becomes your net worth.
               </p>
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                 <Link
                   to="/register"
-                  className="btn bg-card text-primary hover:bg-secondary-light flex items-center justify-center"
+                  className="btn bg-card text-primary hover:bg-secondary-light flex items-center justify-center shadow-md transition-transform duration-150 hover:scale-105"
                 >
                   Get Started
                   <ChevronRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   to="/login"
-                  className="btn border border-white text-white hover:bg-white/10 flex items-center justify-center"
+                  className="btn border border-white text-white hover:bg-white/10 flex items-center justify-center shadow-md transition-transform duration-150 hover:scale-105"
                 >
                   Login to Account
                 </Link>
@@ -77,9 +83,9 @@ const Landing: React.FC = () => {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="lg:w-1/2 flex justify-center"
             >
-              <div className="w-full max-w-md bg-card/10 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+              <div className="w-full max-w-md bg-card/10 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/10">
                 <div className="flex items-center mb-6">
-                  <div className="p-3 bg-primary rounded-lg">
+                  <div className="p-3 bg-primary rounded-lg shadow-md">
                     <Users className="h-6 w-6 text-white" />
                   </div>
                   <div className="ml-4">
@@ -127,6 +133,7 @@ const Landing: React.FC = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
+            {/* Animation on hover for feature cards */}
             {[
               {
                 icon: Users,
@@ -153,9 +160,9 @@ const Landing: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-card rounded-xl shadow-sm p-6"
+                className={`bg-card rounded-xl shadow-sm p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group`}
               >
-                <div className={`p-3 rounded-lg ${feature.color} inline-block`}>
+                <div className={`p-3 rounded-lg ${feature.color} inline-block group-hover:scale-110 transition-transform duration-200`}>
                   <feature.icon className="h-6 w-6" />
                 </div>
                 <h3 className="mt-4 text-xl font-medium text-text-primary">{feature.title}</h3>
@@ -177,6 +184,7 @@ const Landing: React.FC = () => {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Add subtle hover effect and highlight for popular plan */}
             {[
               {
                 name: 'Starter Plan',
@@ -210,14 +218,14 @@ const Landing: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
                 viewport={{ once: true }}
-                className={`bg-card rounded-xl shadow-md overflow-hidden border-2 ${plan.color}`}
+                className={`bg-card rounded-xl shadow-md overflow-hidden border-2 ${plan.color} hover:shadow-xl hover:-translate-y-1 transition-all duration-200 relative`}
               >
                 {plan.popular && (
-                  <div className="bg-secondary text-white text-center py-1 text-sm font-medium">
+                  <div className="bg-secondary text-white text-center py-1 text-sm font-medium absolute top-0 left-0 right-0 z-10 shadow-md">
                     MOST POPULAR
                   </div>
                 )}
-                <div className="p-6">
+                <div className="p-6 pt-8">
                   <h3 className="text-2xl font-bold text-text-primary">{plan.name}</h3>
                   <div className="mt-4 flex items-baseline">
                     <span className="text-5xl font-extrabold text-text-primary">{plan.price}</span>
@@ -236,7 +244,7 @@ const Landing: React.FC = () => {
                   <div className="mt-8">
                     <Link
                       to="/register"
-                      className={`block w-full text-center py-3 rounded-md font-medium text-white ${plan.buttonColor}`}
+                      className={`block w-full text-center py-3 rounded-md font-medium text-white ${plan.buttonColor} shadow-md transition-transform duration-150 hover:scale-105`}
                     >
                       Get Started
                     </Link>
@@ -249,23 +257,23 @@ const Landing: React.FC = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-text-primary text-white py-12">
+      <footer className="bg-text-primary text-white py-12 mt-8">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center mb-6 md:mb-0">
-              <div className="p-2 bg-card rounded-lg">
+              <div className="p-2 bg-card rounded-lg shadow-md">
                 <Layers className="h-6 w-6 text-primary" />
               </div>
-              <span className="ml-2 text-xl font-bold">Boom Bag</span>
+              <span className="ml-2 text-xl font-bold tracking-wide">Boom Bag</span>
             </div>
             <div className="flex space-x-6">
-              <Link to="/terms" className="text-text-secondary hover:text-white">
+              <Link to="/terms" className="text-text-secondary hover:text-white transition-colors duration-150">
                 Terms of Service
               </Link>
-              <Link to="/privacy" className="text-text-secondary hover:text-white">
+              <Link to="/privacy" className="text-text-secondary hover:text-white transition-colors duration-150">
                 Privacy Policy
               </Link>
-              <Link to="/faq" className="text-text-secondary hover:text-white">
+              <Link to="/faq" className="text-text-secondary hover:text-white transition-colors duration-150">
                 FAQ
               </Link>
             </div>

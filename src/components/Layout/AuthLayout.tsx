@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Layers } from 'lucide-react';
+import logoo from '../../assets/logo-boombag.png';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -25,8 +25,8 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
         <div className="flex justify-center">
           <Link to="/" className="flex items-center">
             <span className="sr-only">Boom Bag</span>
-            <div className="p-2 bg-primary rounded-lg">
-              <Layers className="h-8 w-8 text-white" />
+            <div>
+              <img src={logoo} alt="Boom Bag Logo" className="h-12" />
             </div>
           </Link>
         </div>
