@@ -23,7 +23,6 @@ const Landing: React.FC = () => {
               alt="Boom Bag Logo"
               className="h-10 w-auto drop-shadow-md"
             />
-            <span className="hidden sm:inline text-white text-lg font-bold tracking-wide ml-2">Boom Bag</span>
           </div>
           <div className="space-x-2">
             <Link
