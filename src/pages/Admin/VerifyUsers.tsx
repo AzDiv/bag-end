@@ -16,7 +16,7 @@ const VerifyUsers: React.FC = () => {
         const users = await getPendingVerifications();
         setPendingUsers(users);
       } catch (e) {
-        toast.error('Failed to load pending users');
+        toast.error('Échec du chargement des utilisateurs en attente');
       } finally {
         setLoading(false);
       }
@@ -30,7 +30,7 @@ const VerifyUsers: React.FC = () => {
       const success = await updateUserStatus(userId, status);
       if (success) {
         setPendingUsers(prev => prev.filter(u => u.id !== userId));
-        toast.success(`User ${status === 'active' ? 'verified' : 'rejected'} successfully`);
+        toast.success(`Utilisateur ${status === 'active' ? 'vérifié' : 'rejeté'} avec succès`);
         if (status === 'active') {
           const user = await getUserById(userId);
           if (user?.invite_code) {
@@ -46,7 +46,7 @@ const VerifyUsers: React.FC = () => {
         }
       }
     } catch (e) {
-      toast.error('Failed to update user status');
+      toast.error('Échec de la mise à jour du statut de l\'utilisateur');
     } finally {
       setProcessingIds(prev => {
         const newSet = new Set(prev);
@@ -59,7 +59,7 @@ const VerifyUsers: React.FC = () => {
   return (
     <DashboardLayout>
       <div className="max-w-7xl mx-auto py-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Pending User Verifications</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-6">Vérifications d'utilisateurs en attente</h1>
         {loading ? (
           <div className="flex justify-center items-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>

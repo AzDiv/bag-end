@@ -23,26 +23,26 @@ const ProgressStats: React.FC<ProgressStatsProps> = ({ user }) => {
 
   const stats = [
     {
-      name: 'Total Members',
+      name: 'Membres au total',
       value: members,
       icon: Users,
       color: 'bg-primary-light text-primary-dark'
     },
     {
-      name: 'Verified Members',
+      name: 'Membres vérifiés',
       value: verifiedMembers,
       icon: UserCheck,
       color: 'bg-success text-success'
     },
     {
-      name: 'Current Level',
+      name: 'Niveau actuel',
       value: currentLevel,
       icon: Target,
       color: 'bg-secondary-light text-secondary-dark'
     },
     {
-      name: 'Next Level In',
-      value: `${nextLevelNeeded} members`,
+      name: 'Prochain niveau dans',
+      value: `${nextLevelNeeded} membres`,
       icon: Award,
       color: 'bg-secondary-light text-secondary-dark'
     }
@@ -51,16 +51,16 @@ const ProgressStats: React.FC<ProgressStatsProps> = ({ user }) => {
   return (
     <div className="bg-card rounded-xl shadow-md overflow-hidden">
       <div className="px-6 py-5 border-b border-secondary">
-        <h3 className="text-lg font-medium text-text-primary">Your Progress</h3>
+        <h3 className="text-lg font-medium text-text-primary">Votre progression</h3>
         <p className="mt-1 text-sm text-text-secondary">
-          Track your growth and achievements
+          Suivez votre croissance et vos réalisations
         </p>
       </div>
       
       <div className="px-6 py-5">
         <div className="flex items-center mb-1">
           <span className="text-sm font-medium text-text-secondary">
-            Level Progress ({currentLevel}/{maxLevel})
+            Progression du niveau ({currentLevel}/{maxLevel})
           </span>
           <span className="ml-auto text-sm font-medium text-text-secondary">
             {Math.round(levelProgress)}%

@@ -28,13 +28,13 @@ const Landing: React.FC = () => {
               to="/login"
               className="px-4 py-2 text-white hover:text-white/90 transition-colors duration-150"
             >
-              Login
+              Connexion
             </Link>
             <Link
               to="/register"
               className="px-4 py-2 bg-card text-primary rounded-md hover:bg-secondary-light shadow-sm transition-colors duration-150"
             >
-              Sign Up
+              S'inscrire
             </Link>
           </div>
         </div>
@@ -54,24 +54,25 @@ const Landing: React.FC = () => {
               className="lg:w-1/2 mb-10 lg:mb-0"
             >
               <h1 className="text-4xl sm:text-5xl font-bold mb-4 drop-shadow-lg">
-                Progress Together, Earn Together
+                Progresser ensemble, gagner ensemble
               </h1>
               <p className="text-lg sm:text-xl mb-8 text-primary-light max-w-lg">
-                Join Boom Bag and be part of a thriving community where your network becomes your net worth.
+                Rejoignez Boom Bag et faites partie d'une communauté dynamique où votre réseau devient votre valeur.
               </p>
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                 <Link
                   to="/register"
                   className="btn bg-card text-primary hover:bg-secondary-light flex items-center justify-center shadow-md transition-transform duration-150 hover:scale-105"
                 >
-                  Get Started
+                  Commencer
                   <ChevronRight className="h-5 w-5 ml-1" />
                 </Link>
                 <Link
                   to="/login"
                   className="btn border border-white text-white hover:bg-white/10 flex items-center justify-center shadow-md transition-transform duration-150 hover:scale-105"
                 >
-                  Login to Account
+                  Se connecter à mon compte
+                  <ChevronRight className="h-5 w-5 ml-1" />
                 </Link>
               </div>
             </motion.div>
@@ -87,30 +88,30 @@ const Landing: React.FC = () => {
                     <Users className="h-6 w-6 text-white" />
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-xl font-semibold">Group System</h3>
-                    <p className="text-primary-light">Create and grow your network</p>
+                    <h3 className="text-xl font-semibold">Système de groupes</h3>
+                    <p className="text-primary-light">Créez et développez votre réseau</p>
                   </div>
                 </div>
                 <div className="space-y-4">
                   <div className="bg-card/20 rounded-lg p-4 flex items-center">
                     <Award className="h-5 w-5 text-secondary mr-3" />
                     <div>
-                      <h4 className="font-medium">Level Progression</h4>
-                      <p className="text-sm text-primary-light">Advance through levels by growing your group</p>
+                      <h4 className="font-medium">Progression de niveau</h4>
+                      <p className="text-sm text-primary-light">Progressez dans les niveaux en développant votre groupe</p>
                     </div>
                   </div>
                   <div className="bg-card/20 rounded-lg p-4 flex items-center">
                     <TrendingUp className="h-5 w-5 text-secondary mr-3" />
                     <div>
-                      <h4 className="font-medium">Verified Members</h4>
-                      <p className="text-sm text-primary-light">Unlock new levels with each verified member</p>
+                      <h4 className="font-medium">Membres vérifiés</h4>
+                      <p className="text-sm text-primary-light">Débloquez de nouveaux niveaux avec chaque membre vérifié</p>
                     </div>
                   </div>
                   <div className="bg-card/20 rounded-lg p-4 flex items-center">
                     <Shield className="h-5 w-5 text-primary-dark mr-3" />
                     <div>
-                      <h4 className="font-medium">Secure System</h4>
-                      <p className="text-sm text-primary-light">Safe, transparent progression system</p>
+                      <h4 className="font-medium">Système sécurisé</h4>
+                      <p className="text-sm text-primary-light">Système de progression sûr et transparent</p>
                     </div>
                   </div>
                 </div>
@@ -124,9 +125,9 @@ const Landing: React.FC = () => {
       <section className="py-16 bg-secondary-light">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-text-primary">How Boom Bag Works</h2>
+            <h2 className="text-3xl font-bold text-text-primary">Comment fonctionne Boom Bag</h2>
             <p className="mt-4 text-xl text-text-secondary max-w-2xl mx-auto">
-              A simple process to grow your network and progress through levels
+              Un processus simple pour développer votre réseau et progresser dans les niveaux
             </p>
           </div>
 
@@ -135,20 +136,20 @@ const Landing: React.FC = () => {
             {[
               {
                 icon: Users,
-                title: 'Create Your Group',
-                description: 'Once verified, you become a group owner and can invite others to join.',
+                title: 'Créer votre groupe',
+                description: 'Une fois vérifié, vous devenez propriétaire d’un groupe et pouvez inviter d’autres membres.',
                 color: 'bg-primary-light text-primary'
               },
               {
                 icon: Shield,
-                title: 'Verification Process',
-                description: 'Members select a plan and get verified by our admin team.',
+                title: 'Vérification',
+                description: 'Les membres choisissent un plan et sont vérifiés par notre équipe.',
                 color: 'bg-secondary-light text-secondary'
               },
               {
                 icon: TrendingUp,
-                title: 'Level Progression',
-                description: 'Every 4 verified members helps you advance to the next level.',
+                title: 'Progression de niveau',
+                description: 'Chaque 4 membres vérifiés vous fait avancer au niveau suivant.',
                 color: 'bg-primary-light text-primary'
               }
             ].map((feature, idx) => (
@@ -175,9 +176,9 @@ const Landing: React.FC = () => {
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-text-primary">Choose Your Plan</h2>
+            <h2 className="text-3xl font-bold text-text-primary">Choisissez votre plan</h2>
             <p className="mt-4 text-xl text-text-secondary max-w-2xl mx-auto">
-              Select the plan that fits your goals and ambitions
+              Sélectionnez le plan qui correspond à vos objectifs et ambitions
             </p>
           </div>
 
@@ -185,26 +186,26 @@ const Landing: React.FC = () => {
             {/* Add subtle hover effect and highlight for popular plan */}
             {[
               {
-                name: 'Starter Plan',
+                name: 'Plan Starter',
                 price: '$5',
                 features: [
-                  'Access to Levels 10, 20, 30',
-                  'Standard progression speed',
-                  'Basic invitation tools',
-                  'Community support'
+                  'Accès aux niveaux 5, 10, 20',
+                  'Vitesse de progression standard',
+                  'Outils d’invitation de base',
+                  'Support communautaire'
                 ],
                 color: 'border-primary',
                 buttonColor: 'bg-primary hover:bg-primary-dark'
               },
               {
-                name: 'Gold Plan',
+                name: 'Plan Gold',
                 price: '$50',
                 popular: true,
                 features: [
-                  'Access to Levels 10-60',
-                  'Faster progression rates',
-                  'Advanced group tools',
-                  'Priority support'
+                  'Accès aux niveaux 50, 100, 200',
+                  'Progression accélérée',
+                  'Outils de groupe avancés',
+                  'Support prioritaire'
                 ],
                 color: 'border-secondary',
                 buttonColor: 'bg-secondary hover:bg-secondary-dark'
@@ -220,7 +221,7 @@ const Landing: React.FC = () => {
               >
                 {plan.popular && (
                   <div className="bg-secondary text-white text-center py-1 text-sm font-medium absolute top-0 left-0 right-0 z-10 shadow-md">
-                    MOST POPULAR
+                    LE PLUS POPULAIRE
                   </div>
                 )}
                 <div className="p-6 pt-8">
@@ -244,7 +245,7 @@ const Landing: React.FC = () => {
                       to="/register"
                       className={`block w-full text-center py-3 rounded-md font-medium text-white ${plan.buttonColor} shadow-md transition-transform duration-150 hover:scale-105`}
                     >
-                      Get Started
+                      Commencer
                     </Link>
                   </div>
                 </div>
@@ -267,10 +268,10 @@ const Landing: React.FC = () => {
             </div>
             <div className="flex space-x-6">
               <Link to="/terms" className="text-text-secondary hover:text-white transition-colors duration-150">
-                Terms of Service
+                Conditions d'utilisation
               </Link>
               <Link to="/privacy" className="text-text-secondary hover:text-white transition-colors duration-150">
-                Privacy Policy
+                Politique de confidentialité
               </Link>
               <Link to="/faq" className="text-text-secondary hover:text-white transition-colors duration-150">
                 FAQ
@@ -278,7 +279,7 @@ const Landing: React.FC = () => {
             </div>
           </div>
           <div className="mt-8 text-center text-text-secondary text-sm">
-            &copy; {new Date().getFullYear()} Boom Bag. All rights reserved.
+            &copy; {new Date().getFullYear()} Boom Bag. Tous droits réservés.
           </div>
         </div>
       </footer>

@@ -34,12 +34,12 @@ const Login: React.FC = () => {
       const { success, error } = await signIn(email, password);
       
       if (success) {
-        toast.success('Login successful!');
+        toast.success('Connexion réussie !');
       } else {
         throw new Error(error);
       }
     } catch (error: any) {
-      toast.error(error.message || 'Login failed');
+      toast.error(error.message || 'Échec de la connexion');
     } finally {
       setLoading(false);
     }
@@ -47,8 +47,8 @@ const Login: React.FC = () => {
   
   return (
     <AuthLayout 
-      title="Welcome back" 
-      subtitle="Sign in to access your account"
+      title="Bienvenue à nouveau" 
+      subtitle="Connectez-vous pour accéder à votre compte"
     >
       <motion.form 
         initial={{ opacity: 0 }}
@@ -59,7 +59,7 @@ const Login: React.FC = () => {
       >
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Email address
+            Adresse e-mail
           </label>
           <div className="mt-1">
             <input
@@ -71,14 +71,14 @@ const Login: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="input"
-              placeholder="Enter your email"
+              placeholder="Entrez votre email"
             />
           </div>
         </div>
 
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-            Password
+            Mot de passe
           </label>
           <div className="mt-1 relative">
             <input
@@ -90,7 +90,7 @@ const Login: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="input pr-10"
-              placeholder="Enter your password"
+              placeholder="Entrez votre mot de passe"
             />
             <button
               type="button"
@@ -115,13 +115,13 @@ const Login: React.FC = () => {
               className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
             />
             <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-              Remember me
+              Se souvenir de moi
             </label>
           </div>
 
           <div className="text-sm">
             <Link to="/forgot-password" className="font-medium text-primary hover:text-primary-dark">
-              Forgot your password?
+              Mot de passe oublié ?
             </Link>
           </div>
         </div>
@@ -138,14 +138,14 @@ const Login: React.FC = () => {
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
             ) : null}
-            Sign in
+            Se connecter
           </button>
         </div>
 
         <div className="text-sm text-center">
-          Don't have an account?{' '}
+          Vous n'avez pas de compte ?{' '}
           <Link to="/register" className="font-medium text-primary hover:text-primary-dark">
-            Sign up
+            Inscrivez-vous
           </Link>
         </div>
       </motion.form>

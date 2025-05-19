@@ -12,10 +12,10 @@ interface AdminLogsProps {
 }
 
 const LOG_TYPES = [
-  { label: 'All', value: 'all' },
-  { label: 'Verifications', value: 'verifications' },
-  { label: 'Rejections', value: 'rejections' },
-  { label: 'Groups', value: 'groups' },
+  { label: 'Tous', value: 'all' },
+  { label: 'Vérifications', value: 'verifications' },
+  { label: 'Rejetons', value: 'rejections' },
+  { label: 'Groupes', value: 'groups' },
 ];
 
 const ICONS = {
@@ -46,8 +46,8 @@ const AdminLogs: React.FC<AdminLogsProps> = ({ logs }) => {
     <div className="bg-white rounded-xl shadow-md overflow-hidden">
       <div className="px-6 py-5 border-b border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h2 className="text-lg font-medium text-gray-900">Latest Infos</h2>
-          <p className="mt-1 text-sm text-gray-500">Recent system and admin actions</p>
+          <h2 className="text-lg font-medium text-gray-900">Dernières informations</h2>
+          <p className="mt-1 text-sm text-gray-500">Actions récentes du système et des administrateurs</p>
         </div>
         <select
           className="input w-48"
@@ -62,7 +62,7 @@ const AdminLogs: React.FC<AdminLogsProps> = ({ logs }) => {
       <div className="max-h-96 overflow-y-auto">
         <ul className="divide-y divide-gray-100">
           {filteredLogs.length === 0 ? (
-            <li className="p-6 text-gray-500 text-center">No logs available.</li>
+            <li className="p-6 text-gray-500 text-center">Aucun journal disponible.</li>
           ) : (
             filteredLogs.map((log, idx) => {
               const type = getLogType(log);
@@ -102,9 +102,9 @@ const AdminLogs: React.FC<AdminLogsProps> = ({ logs }) => {
                       type === 'rejections' ? 'text-red-600' :
                       'text-gray-500'
                     }`}>
-                      {type === 'verifications' ? 'Verified' :
-                       type === 'rejections' ? 'Rejected' :
-                       type === 'groups' ? 'Group' : (log.level || 'info').toUpperCase()}
+                      {type === 'verifications' ? 'Vérifié' :
+                       type === 'rejections' ? 'Rejeté' :
+                       type === 'groups' ? 'Groupe' : (log.level || 'info').toUpperCase()}
                     </span>
                       <span className="text-xs text-gray-400">{new Date(log.timestamp).toLocaleString()}</span>
                     </div>
@@ -117,14 +117,14 @@ const AdminLogs: React.FC<AdminLogsProps> = ({ logs }) => {
                         const userMatch = msg.match(/User ([^\(]+) \(([^\)]+)\)/);
                         if (userMatch) {
                           return <>
-                            User <span className="font-semibold text-green-700">{userMatch[1].trim()}</span> (<span className="font-semibold text-primary">{userMatch[2]}</span>) {msg.includes('verified') ? 'was verified.' : 'was rejected.'}
+                            Utilisateur <span className="font-semibold text-green-700">{userMatch[1].trim()}</span> (<span className="font-semibold text-primary">{userMatch[2]}</span>) {msg.includes('verified') ? 'a été vérifié.' : 'a été rejeté.'}
                           </>;
                         }
                         // Group creation
                         const groupMatch = msg.match(/Group #(\d+) \(code: ([^\)]+)\)/);
                         if (groupMatch) {
                           return <>
-                            Group <span className="font-semibold text-blue-600">#{groupMatch[1]}</span> (code: <span className="font-mono font-semibold text-primary">{groupMatch[2]}</span>) was created.
+                            Groupe <span className="font-semibold text-blue-600">#{groupMatch[1]}</span> (code: <span className="font-mono font-semibold text-primary">{groupMatch[2]}</span>) was created.
                           </>;
                         }
                         // Fallback

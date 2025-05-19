@@ -15,12 +15,12 @@ const PlanSelection: React.FC = () => {
       const { success, error } = await selectPlan(packType);
       
       if (success) {
-        toast.success(`${packType.charAt(0).toUpperCase() + packType.slice(1)} plan selected!`);
+        toast.success(`${packType.charAt(0).toUpperCase() + packType.slice(1)} sélectionné !`);
       } else {
         throw new Error(error);
       }
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to select plan');
+    } catch (error) {
+      toast.error((error as Error).message || 'Échec de la sélection du plan');
     } finally {
       setLoading(false);
     }
@@ -33,14 +33,14 @@ const PlanSelection: React.FC = () => {
   const plans = [
     {
       type: 'starter',
-      name: 'Starter Plan',
-      price: '$5',
-      description: 'Perfect for beginners looking to start their journey',
+      name: 'Plan Starter',
+      price: '5$',
+      description: 'Parfait pour les débutants souhaitant démarrer leur parcours',
       features: [
-        'Access to Levels 10, 20, 30',
-        'Standard progression speed',
-        'Basic invitation tools',
-        'Community support'
+        'Accès aux niveaux 10, 20, 30',
+        'Vitesse de progression standard',
+        'Outils d’invitation de base',
+        'Support communautaire'
       ],
       icon: Zap,
       color: 'bg-primary',
@@ -49,14 +49,14 @@ const PlanSelection: React.FC = () => {
     },
     {
       type: 'gold',
-      name: 'Gold Plan',
-      price: '$50',
-      description: 'Accelerated progress for serious members',
+      name: 'Plan Gold',
+      price: '50$',
+      description: 'Progression accélérée pour les membres sérieux',
       features: [
-        'Access to Levels 10-60',
-        'Faster progression rates',
-        'Advanced group tools',
-        'Priority support'
+        'Accès aux niveaux 10-60',
+        'Progression plus rapide',
+        'Outils de groupe avancés',
+        'Support prioritaire'
       ],
       icon: Award,
       color: 'bg-secondary',
@@ -69,9 +69,9 @@ const PlanSelection: React.FC = () => {
     <div className="w-full max-w-4xl mx-auto">
       <div className="space-y-8">
         <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-primary-dark mb-2">Choose Your Plan</h2>
+          <h2 className="text-3xl font-extrabold text-primary-dark mb-2">Choisissez Votre Plan</h2>
           <p className="mt-2 text-lg text-secondary-dark">
-            Select the plan that fits your goals and ambitions
+            Sélectionnez le plan qui correspond à vos objectifs et ambitions
           </p>
         </div>
 
@@ -94,7 +94,7 @@ const PlanSelection: React.FC = () => {
                 {selected && (
                   <div className="absolute top-4 right-4 flex items-center gap-1 z-10">
                     <span className="inline-flex items-center px-2 py-1 rounded-full bg-success text-white text-xs font-semibold shadow">
-                      <Check className="h-4 w-4 mr-1" /> Current
+                      <Check className="h-4 w-4 mr-1" /> Actuel
                     </span>
                   </div>
                 )}
@@ -108,11 +108,9 @@ const PlanSelection: React.FC = () => {
                 <p className="mt-2 text-base text-secondary-dark mb-4">{plan.description}</p>
                 <ul className="mt-4 space-y-3">
                   {plan.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-center">
-                      <span className="flex-shrink-0 h-5 w-5 flex items-center justify-center rounded-full bg-success/20 text-success mr-2">
-                        <Check className="h-3.5 w-3.5" />
-                      </span>
-                      <span className="text-sm text-primary-dark">{feature}</span>
+                    <li key={idx} className="flex items-center text-sm text-text-secondary">
+                      <Check className="h-4 w-4 mr-2 text-success" />
+                      {feature}
                     </li>
                   ))}
                 </ul>
@@ -125,7 +123,7 @@ const PlanSelection: React.FC = () => {
                       : `${plan.color} text-white hover:opacity-90 focus:ring-${plan.type === 'gold' ? 'secondary' : 'primary'}`
                     }`}
                 >
-                  {selected ? 'Current Plan' : 'Select Plan'}
+                  {selected ? 'Plan Actuel' : 'Sélectionner le Plan'}
                 </button>
               </motion.div>
             );
@@ -134,9 +132,9 @@ const PlanSelection: React.FC = () => {
 
         {user?.pack_type && (
           <div className="bg-gradient-to-r from-secondary-light to-primary-light p-5 rounded-xl shadow flex flex-col items-center mt-8">
-            <h3 className="font-bold text-primary-dark text-lg mb-1">What's Next?</h3>
+            <h3 className="font-bold text-primary-dark text-lg mb-1">Et après ?</h3>
             <p className="text-sm text-primary-dark mb-3 text-center max-w-xl">
-              To activate your plan, please send your payment via one of the methods below and submit proof.
+              Pour activer votre plan, veuillez envoyer votre paiement via l’une des méthodes ci-dessous et soumettre une preuve.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
               <a 
@@ -145,7 +143,7 @@ const PlanSelection: React.FC = () => {
                 rel="noopener noreferrer"
                 className="btn bg-[#0088cc] text-white hover:bg-[#0077b5] focus:ring-primary shadow"
               >
-                Submit via Telegram
+                Soumettre via Telegram
               </a>
               {/*<a 
                 href="https://wa.me/" 

@@ -20,15 +20,15 @@ const GroupCard: React.FC<GroupCardProps> = ({
   packType,
 }) => {
   const levelName = group.group_number === 1 
-    ? 'First Level' 
+    ? 'Niveau 1' 
     : group.group_number === 2 
-      ? 'Second Level' 
-      : 'Third Level';
+      ? 'Niveau 2' 
+      : 'Niveau 3';
 
   const copyInviteLink = () => {
     const inviteUrl = `${window.location.origin}/join?code=${group.code}`;
     navigator.clipboard.writeText(inviteUrl);
-    toast.success('Invite link copied to clipboard!');
+    toast.success('Lien d’invitation copié dans le presse-papiers !');
   };
 
   const isCompleted = verifiedCount >= 4;
@@ -74,7 +74,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
         
         <div className="flex items-center mt-1">
           <p className="text-sm text-text-secondary">
-            Group Code: <span className="font-medium">{group.code}</span>
+            Code du groupe : <span className="font-medium">{group.code}</span>
           </p>
           {isCompleted && (
             <motion.span 
@@ -82,7 +82,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
               animate={{ opacity: 1, x: 0 }}
               className="badge bg-success text-white ml-2 py-1 px-2 rounded-md flex items-center gap-1"
             >
-              <span className="h-2 w-2 bg-white rounded-full inline-block"></span> Completed
+              <span className="h-2 w-2 bg-white rounded-full inline-block"></span> Terminé
             </motion.span>
           )}
         </div>
@@ -95,7 +95,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
               <Users className="h-5 w-5 text-text-secondary" />
             </div>
             <span className="ml-2 text-sm text-text-secondary">
-              Members: <span className="font-semibold">{memberCount}</span>
+              Membres : <span className="font-semibold">{memberCount}</span>
             </span>
           </div>
           <div className="flex items-center">
@@ -103,14 +103,14 @@ const GroupCard: React.FC<GroupCardProps> = ({
               <UserPlus className="h-5 w-5 text-success" />
             </div>
             <span className="ml-2 text-sm text-text-secondary">
-              Verified: <span className="font-semibold">{verifiedCount}</span>
+              Vérifiés : <span className="font-semibold">{verifiedCount}</span>
             </span>
           </div>
         </div>
         
         <div className="mt-5">
           <div className="flex justify-between mb-1">
-            <span className="text-xs font-medium text-text-secondary">Progress to Next Level</span>
+            <span className="text-xs font-medium text-text-secondary">Progression vers le prochain niveau</span>
             <span className="text-xs font-medium text-text-primary">{verifiedCount}/4</span>
           </div>
           <div className="w-full bg-secondary/30 rounded-full h-3 p-0.5">
@@ -147,7 +147,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
             packType === 'gold' ? 'bg-amber-500 hover:bg-amber-600' : 'bg-primary hover:bg-primary-dark'
           }`}
         >
-          Copy Invite Link
+          Copier le lien d’invitation
         </motion.button>
       </div>
     </motion.div>

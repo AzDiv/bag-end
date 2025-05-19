@@ -51,13 +51,13 @@ const Dashboard: React.FC = () => {
     return (
       <DashboardLayout>
         <div className="max-w-6xl mx-auto py-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">Welcome to Boom Bag!</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-6">Bienvenue sur Boom Bag !</h1>
           <div className="bg-white rounded-xl shadow-md p-6 mb-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              Next Step: Choose Your Plan
+              Prochaine étape : choisissez votre plan
             </h2>
             <p className="text-gray-600 mb-6">
-              Select a plan that fits your goals to continue setting up your account.
+              Sélectionnez un plan adapté à vos objectifs pour continuer la configuration de votre compte.
             </p>
             <PlanSelection />
           </div>
@@ -113,7 +113,7 @@ const Dashboard: React.FC = () => {
                 <div className="border-t border-gray-200 pt-6">
                   <h3 className="text-lg font-medium text-gray-800 mb-4 flex items-center">
                     <Link2 className="h-5 w-5 mr-2 text-gray-500" />
-                    Contactez-nous pour finaliser votre inscription:
+                    Contactez-nous pour finaliser votre inscription :
                   </h3>
                   <div className="flex flex-wrap gap-4">
                     <a 
@@ -163,7 +163,7 @@ const Dashboard: React.FC = () => {
   return (
     <DashboardLayout>
       <div className="max-w-6xl mx-auto py-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Dashboard</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-6">Tableau de bord</h1>
         
         {loading ? (
           <div className="flex justify-center items-center py-12">
@@ -177,9 +177,9 @@ const Dashboard: React.FC = () => {
                 {/* Groups */}
                 <div className="bg-white rounded-xl shadow-md overflow-hidden">
                   <div className="px-6 py-5 border-b border-gray-200">
-                    <h3 className="text-lg font-medium text-gray-900">Your Groups</h3>
+                    <h3 className="text-lg font-medium text-gray-900">Vos Groupes</h3>
                     <p className="mt-1 text-sm text-gray-500">
-                      Manage your groups and track their progress
+                      Gérez vos groupes et suivez leurs progrès
                     </p>
                   </div>
                   
@@ -189,7 +189,7 @@ const Dashboard: React.FC = () => {
                         const group = userData.groups?.find(g => g.group_number === groupNumber);
                         const packType = user?.pack_type || 'starter';
                         // Define levels and amounts
-                        const starterAmounts = ['$10', '$20', '$30'];
+                        const starterAmounts = ['5$', '10$', '20$'];
                         const goldAmounts = ['$50', '$100', '$200'];
                         const isGold = packType === 'gold';
                         const amount = isGold ? goldAmounts[idx] : starterAmounts[idx];
@@ -218,9 +218,9 @@ const Dashboard: React.FC = () => {
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 11V7a4 4 0 10-8 0v4M6 15v2a2 2 0 002 2h8a2 2 0 002-2v-2M6 15h12" />
                                 </svg>
                               </div>
-                              <div className="text-2xl font-bold text-gray-500 mb-2">Level {groupNumber} Group</div>
+                              <div className="text-2xl font-bold text-gray-500 mb-2">Groupe Niveau {groupNumber}</div>
                               <div className="text-lg text-gray-400 mb-4">{amount}</div>
-                              <div className="text-gray-400">Locked</div>
+                              <div className="text-gray-400">Verrouillé</div>
                             </div>
                           );
                         }

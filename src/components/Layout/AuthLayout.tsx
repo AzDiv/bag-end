@@ -24,9 +24,9 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
       >
         <div className="flex justify-center">
           <Link to="/" className="flex items-center">
-            <span className="sr-only">Boom Bag</span>
+            <span className="sr-only">Accueil Boom Bag</span>
             <div>
-              <img src={logoo} alt="Boom Bag Logo" className="h-12" />
+              <img src={logoo} alt="Logo Boom Bag" className="h-12" />
             </div>
           </Link>
         </div>

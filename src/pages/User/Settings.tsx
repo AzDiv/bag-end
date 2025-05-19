@@ -22,9 +22,9 @@ const Settings: React.FC = () => {
     const result = await updateUserProfile({ name, email, whatsapp });
     setLoading(false);
     if (result.success) {
-      toast.success('Profile updated!');
+      toast.success('Profil mis à jour !');
     } else {
-      toast.error(result.error || 'Failed to update profile');
+      toast.error(result.error || 'Échec de la mise à jour du profil');
     }
   };
 
@@ -150,7 +150,7 @@ const Settings: React.FC = () => {
                     <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.069l-1.68 8.057c-.133.644-.489.8-.989.498L11 13.117l-2.125 2.058c-.235.237-.432.434-.887.434l.307-4.378 7.968-7.194c.346-.307-.075-.478-.532-.172L5.412 10.17l-2.247-.745c-.49-.158-.497-.479.109-.711l17.764-6.84c.424-.175.81.106.656.564z" />
                     </svg>
-                    Any further support needed 
+                    Besoin d'aide supplémentaire ?
                   </a>
                 </div>
                 

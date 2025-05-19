@@ -41,24 +41,24 @@ const Register: React.FC = () => {
     e.preventDefault();
     
     if (password !== confirmPassword) {
-      toast.error('Passwords do not match');
+      toast.error('Les mots de passe ne correspondent pas');
       return;
     }
     
     if (password.length < 6) {
-      toast.error('Password must be at least 6 characters');
+      toast.error('Le mot de passe doit contenir au moins 6 caractères');
       return;
     }
 
     // Validate Moroccan WhatsApp number: starts with +212 or 0, followed by 9 digits
     const moroccoRegex = /^(?:\+212|0)([ \-]?\d){9}$/;
     if (!moroccoRegex.test(whatsapp)) {
-      toast.error('Please enter a valid Moroccan WhatsApp number (e.g. +212612345678 or 0612345678)');
+      toast.error('Veuillez entrer un numéro WhatsApp marocain valide (ex. : +212612345678 ou 0612345678)');
       return;
     }
 
     if (!inviteCode) {
-      toast.error('Invite code is required');
+      toast.error('Le code d\'invitation est requis');
       return;
     }
     
@@ -68,7 +68,7 @@ const Register: React.FC = () => {
       const { success, error } = await signUp(email, password, name, inviteCode, whatsapp);
       
       if (success) {
-        toast.success('Registration successful!');
+        toast.success('Inscription réussie !');
         const telegramMessage = encodeURIComponent(
         `Bonjour, je viens de m'inscrire. Je suis ${name}, mon numéro WhatsApp est ${whatsapp} et mon email est ${email}.`
         );
@@ -79,7 +79,7 @@ const Register: React.FC = () => {
         throw new Error(error);
       }
     } catch (error: any) {
-      toast.error(error.message || 'Registration failed');
+      toast.error(error.message || 'Échec de l\'inscription');
     } finally {
       setLoading(false);
     }
@@ -87,8 +87,8 @@ const Register: React.FC = () => {
   
   return (
     <AuthLayout 
-      title="Create your account" 
-      subtitle="Join the community and start progressing"
+      title="Créez votre compte" 
+      subtitle="Rejoignez la communauté et commencez à progresser"
     >
       <motion.form 
         initial={{ opacity: 0 }}
@@ -99,7 +99,7 @@ const Register: React.FC = () => {
       >
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-            Full Name
+            Nom complet
           </label>
           <div className="mt-1">
             <input
@@ -110,14 +110,14 @@ const Register: React.FC = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="input"
-              placeholder="Enter your full name"
+              placeholder="Entrez votre nom complet"
             />
           </div>
         </div>
 
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Email address
+            Adresse e-mail
           </label>
           <div className="mt-1">
             <input
@@ -129,14 +129,14 @@ const Register: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="input"
-              placeholder="Enter your email"
+              placeholder="Entrez votre e-mail"
             />
           </div>
         </div>
 
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-            Password
+            Mot de passe
           </label>
           <div className="mt-1 relative">
             <input
@@ -148,7 +148,7 @@ const Register: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="input pr-10"
-              placeholder="Create a password"
+              placeholder="Créez un mot de passe"
             />
             <button
               type="button"
@@ -166,7 +166,7 @@ const Register: React.FC = () => {
 
         <div>
           <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-            Confirm Password
+            Confirmer le mot de passe
           </label>
           <div className="mt-1">
             <input
@@ -177,14 +177,14 @@ const Register: React.FC = () => {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               className="input"
-              placeholder="Confirm your password"
+              placeholder="Confirmez votre mot de passe"
             />
           </div>
         </div>
 
         <div>
           <label htmlFor="inviteCode" className="block text-sm font-medium text-gray-700">
-            Invite Code <span className="text-red-500">*</span>
+            Code d'invitation <span className="text-red-500">*</span>
           </label>
           <div className="mt-1">
             <input
@@ -194,7 +194,7 @@ const Register: React.FC = () => {
               value={inviteCode}
               onChange={(e) => setInviteCode(e.target.value)}
               className="input"
-              placeholder="Enter invite code"
+              placeholder="Entrez le code d'invitation"
               required // <-- make it required
             />
           </div>
@@ -202,7 +202,7 @@ const Register: React.FC = () => {
 
         <div>
           <label htmlFor="whatsapp" className="block text-sm font-medium text-gray-700">
-            WhatsApp Number
+            Numéro WhatsApp
           </label>
           <div className="mt-1">
             <input
@@ -213,7 +213,7 @@ const Register: React.FC = () => {
               value={whatsapp}
               onChange={(e) => setWhatsapp(e.target.value)}
               className="input"
-              placeholder="Enter your WhatsApp number"
+              placeholder="Entrez votre numéro WhatsApp"
             />
           </div>
         </div>
@@ -234,14 +234,14 @@ const Register: React.FC = () => {
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
             ) : null}
-            Create account
+            Créer un compte
           </button>
         </div>
 
         <div className="text-sm text-center">
-          Already have an account?{' '}
+          Vous avez déjà un compte ?{' '}
           <Link to="/login" className="font-medium text-primary hover:text-primary-dark">
-            Sign in
+            Se connecter
           </Link>
         </div>
       </motion.form>

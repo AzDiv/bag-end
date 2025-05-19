@@ -14,12 +14,12 @@ const PaymentInstructions: React.FC<PaymentInstructionsProps> = ({ className }) 
 
   const copyWalletAddress = () => {
     navigator.clipboard.writeText(walletAddress);
-    toast.success("Wallet address copied to clipboard");
+    toast.success("Adresse du portefeuille copiée dans le presse-papiers");
   };
 
   const openTrustWallet = () => {
     window.open(trustWalletLink, "_blank");
-    toast.success("Opening Trust Wallet");
+    toast.success("Ouverture de Trust Wallet");
   };
 
   return (
@@ -41,18 +41,18 @@ const PaymentInstructions: React.FC<PaymentInstructionsProps> = ({ className }) 
               className="w-36 h-36 object-cover rounded-md"
             />
           </div>
-          <p className="text-sm text-center text-gray-500">Scan this QR code with Trust Wallet to pay</p>
+          <p className="text-sm text-center text-gray-500">Scannez ce QR code avec Trust Wallet pour payer</p>
           <button 
             onClick={openTrustWallet}
             className="mt-2 flex items-center px-3 py-1 text-sm border border-gray-300 rounded-md bg-white hover:bg-gray-50 text-gray-700"
           >
             <ExternalLink className="h-3 w-3 mr-1" />
-            Open Trust Wallet
+            Ouvrir Trust Wallet
           </button>
         </div>
 
         <div className="flex flex-col items-center">
-          <h4 className="font-medium mb-2 text-gray-700">USDT Wallet Address</h4>
+          <h4 className="font-medium mb-2 text-gray-700">Adresse USDT du portefeuille</h4>
           <div className="bg-gray-100 p-3 rounded-lg mb-2 flex items-center max-w-full">
             <code className="text-xs break-all text-gray-800">{walletAddress}</code>
             <button 
@@ -63,12 +63,12 @@ const PaymentInstructions: React.FC<PaymentInstructionsProps> = ({ className }) 
             </button>
           </div>
           <p className="text-sm text-center text-gray-500 mb-2">Adresse publique pour recevoir USDT</p>
-          <p className="text-xs text-center text-gray-500">Please send only USDT (TRC20) to this address</p>
+          <p className="text-xs text-center text-gray-500">Veuillez envoyer uniquement des USDT (TRC20) à cette adresse</p>
         </div>
       </div>
 
       <p className="text-xs text-center mt-4 text-gray-500">
-        Your contribution helps us maintain and improve the BOOM BAG platform. Thank you for your support!
+        Votre contribution nous aide à maintenir et améliorer la plateforme BOOM BAG. Merci pour votre soutien !
       </p>
     </div>
   );

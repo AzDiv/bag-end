@@ -16,9 +16,9 @@ interface UserRow {
 }
 
 const statusOptions = [
-  { value: 'active', label: 'Active', color: 'bg-green-100 text-green-800' },
-  { value: 'pending', label: 'Pending', color: 'bg-yellow-100 text-yellow-800' },
-  { value: 'rejected', label: 'Rejected', color: 'bg-red-100 text-red-800' },
+  { value: 'active', label: 'Actif', color: 'bg-green-100 text-green-800' },
+  { value: 'pending', label: 'En attente', color: 'bg-yellow-100 text-yellow-800' },
+  { value: 'rejected', label: 'Rejeté', color: 'bg-red-100 text-red-800' },
 ];
 
 const Users: React.FC = () => {
@@ -65,7 +65,7 @@ const Users: React.FC = () => {
 
   const handleStatusSave = async (userId: string) => {
     if (!statusEditValue) return;
-    if (!window.confirm(`Are you sure you want to change this user's status to "${statusEditValue}"?`)) return;
+    if (!window.confirm(`Êtes-vous sûr de vouloir changer le statut de cet utilisateur en "${statusEditValue}" ?`)) return;
     setSavingStatus(true);
     try {
       const { error } = await supabase
@@ -74,10 +74,10 @@ const Users: React.FC = () => {
         .eq('id', userId);
       if (error) throw error;
       setUsers(prev => prev.map(u => u.id === userId ? { ...u, status: statusEditValue } : u));
-      toast.success('User status updated');
+      toast.success('Statut de l\'utilisateur mis à jour');
       setStatusEditId(null);
     } catch (e) {
-      toast.error('Failed to update user status');
+      toast.error('Échec de la mise à jour du statut utilisateur');
     } finally {
       setSavingStatus(false);
     }
@@ -86,12 +86,12 @@ const Users: React.FC = () => {
   return (
     <DashboardLayout>
       <div className="max-w-7xl mx-auto py-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Latest Users</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-6">Derniers utilisateurs</h1>
         <div className="mb-4 flex justify-end">
           <input
             type="text"
             className="input w-full max-w-xs border border-gray-300 rounded-md px-3 py-2 text-sm"
-            placeholder="Search by name, email, or WhatsApp..."
+            placeholder="Rechercher par nom, email ou WhatsApp..."
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
@@ -103,19 +103,19 @@ const Users: React.FC = () => {
         ) : users.length === 0 ? (
           <div className="text-center py-12">
             <UsersIcon className="h-12 w-12 mx-auto text-gray-400" />
-            <p className="mt-2 text-gray-500">No users found</p>
+            <p className="mt-2 text-gray-500">Aucun utilisateur trouvé</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilisateur</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plan</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Referred By</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Inscrit</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Parrainé par</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">WhatsApp</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -156,7 +156,7 @@ const Users: React.FC = () => {
                             disabled={savingStatus}
                           >
                             {statusOptions.map(opt => (
-                              <option key={opt.value} value={opt.value}>{opt.label}</option>
+                              <option key={opt.value} value={opt.value}>{opt.label === 'Active' ? 'Actif' : opt.label === 'Pending' ? 'En attente' : opt.label === 'Rejected' ? 'Rejeté' : opt.label}</option>
                             ))}
                           </select>
                           <button
@@ -164,23 +164,24 @@ const Users: React.FC = () => {
                             onClick={() => handleStatusSave(user.id)}
                             disabled={savingStatus}
                           >
-                            Save
+                            Enregistrer
                           </button>
                           <button
                             className="btn btn-ghost btn-xs"
                             onClick={() => setStatusEditId(null)}
                             disabled={savingStatus}
                           >
-                            Cancel
+                            Annuler
                           </button>
                         </div>
                       ) : (
                         <span
                           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium cursor-pointer ${statusOptions.find(opt => opt.value === user.status)?.color}`}
                           onClick={() => handleStatusClick(user.id, user.status)}
-                          title="Click to change status"
+                          title="Cliquer pour changer le statut"
                         >
-                          {user.status || 'pending'}
+                          {user.status === 'active' ? 'actif' : user.status === 'pending' ? 'en attente' : user.status === 'rejected' ? 'rejeté' : user.status}
+                          {/*{user.status ? statusOptions.find(opt => opt.value === user.status)?.label : 'En attente'} */}
                           <Pencil className="ml-1 h-3 w-3 text-gray-400 inline" />
                         </span>
                       )}
