@@ -80,10 +80,18 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       if (inviteCode) {
         const { data: group } = await supabase
           .from('groups')
-          .select('id, owner_id, code')
+          .select('id, owner_id, code, group_number') // fetch group_number
           .eq('code', inviteCode)
           .single();
         if (group) {
+          // Enforce: only allow joining group_number 1 at registration
+          if (group.group_number !== 1) {
+            set({ loading: false });
+            return {
+              success: false,
+              error: 'Vous ne pouvez rejoindre qu’un groupe de niveau 1 lors de l’inscription.'
+            };
+          }
           groupId = group.id;
           inviterId = group.owner_id;
           groupCodeUsed = group.code;

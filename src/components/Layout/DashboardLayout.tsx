@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import logoo from '../../assets/logo-boombag.png';
@@ -36,9 +36,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   ] : [
     { name: 'Tableau de bord', icon: Home, href: '/dashboard' },
     { name: 'Mes groupes', icon: Users, href: '/groups' },
-    { name: 'Inviter des membres', icon: UserPlus, href: '/invite' },
+    { name: 'Rejoindre un groupe', icon: UserPlus, href: '/join-group' },
+    { name: 'Inviter', icon: UserPlus, href: '/invite' },
     { name: 'Paramètres', icon: Settings, href: '/settings' },
   ];
+
+  useEffect(() => {
+    // Removed fetchMemberGroups effect since it is not used anymore
+  }, [user]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -219,6 +224,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           </div>
         </main>
       </div>
+      {/* Floating panel for member groups */}
+      {/* Removed floating panel for member groups and join input from layout. This should only be on the /join-group page. */}
     </div>
   );
 };
