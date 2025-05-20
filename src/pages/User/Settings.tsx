@@ -58,7 +58,7 @@ const Settings: React.FC = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="flex items-center text-sm font-medium text-gray-700">
+                  <label className="flex items-center text-sm font-medium text-gray-700 disabled">
                     <Mail className="h-4 w-4 mr-2 text-gray-400" />
                     Adresse email
                   </label>
