@@ -73,7 +73,7 @@ const Invite: React.FC = () => {
   return (
     <DashboardLayout>
       <div className="max-w-4xl mx-auto py-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Invite Members</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-6">Inviter des membres</h1>
         
         {loading ? (
           <div className="flex justify-center items-center py-12">
@@ -84,13 +84,13 @@ const Invite: React.FC = () => {
             {groups.length === 0 ? (
               <div className="bg-white rounded-xl shadow-md p-6 text-center">
                 <Gift className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No Groups Available</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun groupe disponible</h3>
                 <p className="text-gray-600 mb-6">
-                  You need to be verified and have at least one group to invite members.
+                  Vous devez être vérifié et avoir au moins un groupe pour inviter des membres.
                 </p>
                 {user?.status === 'pending' && (
                   <p className="text-blue-600">
-                    Your account is pending verification. Once verified, you'll automatically get your first group.
+                    Votre compte est en attente de vérification. Une fois vérifié, vous obtiendrez automatiquement votre premier groupe.
                   </p>
                 )}
               </div>
@@ -101,9 +101,9 @@ const Invite: React.FC = () => {
                 className="bg-white rounded-xl shadow-md overflow-hidden"
               >
                 <div className="px-6 py-5 border-b border-gray-200">
-                  <h2 className="text-lg font-medium text-gray-900">Share Your Invitation</h2>
+                  <h2 className="text-lg font-medium text-gray-900">Partager votre invitation</h2>
                   <p className="mt-1 text-sm text-gray-500">
-                    Invite friends to join your group and progress together
+                    Invitez des amis à rejoindre votre groupe et progressez ensemble
                   </p>
                 </div>
                 
@@ -111,7 +111,7 @@ const Invite: React.FC = () => {
                   {selectedGroup && (
                     <div className="space-y-6">
                       <div>
-                        <h3 className="text-sm font-medium text-gray-700 mb-2">Invite Link</h3>
+                        <h3 className="text-sm font-medium text-gray-700 mb-2">Lien d'invitation</h3>
                         <div className="flex items-center">
                           <div className="flex-1 flex items-center border border-gray-300 rounded-l-md py-2 px-3 bg-gray-50">
                             <Link className="h-5 w-5 text-gray-400 mr-2" />
@@ -128,13 +128,13 @@ const Invite: React.FC = () => {
                             className="inline-flex items-center px-4 py-2 border border-gray-300 border-l-0 rounded-r-md bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                           >
                             <Copy className={`h-4 w-4 mr-2 ${copyStatus['link'] ? 'text-green-500' : 'text-gray-500'}`} />
-                            {copyStatus['link'] ? 'Copied!' : 'Copy'}
+                            {copyStatus['link'] ? 'Copié' : 'Copier'}
                           </button>
                         </div>
                       </div>
                       
                       <div>
-                        <h3 className="text-sm font-medium text-gray-700 mb-2">Invite Code</h3>
+                        <h3 className="text-sm font-medium text-gray-700 mb-2">Code d'invitation</h3>
                         <div className="flex items-center">
                           <div className="flex-1 border border-gray-300 rounded-l-md py-2 px-3 bg-gray-50 text-center font-mono">
                             {selectedGroup.code}
@@ -145,7 +145,7 @@ const Invite: React.FC = () => {
                             className="inline-flex items-center px-4 py-2 border border-gray-300 border-l-0 rounded-r-md bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                           >
                             <Copy className={`h-4 w-4 mr-2 ${copyStatus['code'] ? 'text-green-500' : 'text-gray-500'}`} />
-                            {copyStatus['code'] ? 'Copied!' : 'Copy'}
+                            {copyStatus['code'] ? 'Copié !' : 'Copier'}
                           </button>
                         </div>
                       </div>
@@ -157,7 +157,7 @@ const Invite: React.FC = () => {
                           className="w-full flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                         >
                           <Share2 className="h-5 w-5 mr-2" />
-                          Share Invitation
+                          Partager l'invitation
                         </button>
                       </div>
                     </div>

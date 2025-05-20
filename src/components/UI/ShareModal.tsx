@@ -24,7 +24,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ groupCode, isOpen, onClose }) =
   const copyToClipboard = (text: string, type: 'link' | 'code') => {
     navigator.clipboard.writeText(text);
     setCopied(type);
-    toast.success('Copied to clipboard!', {
+    toast.success('Copié dans le presse-papiers !', {
       icon: '📋',
       style: {
         borderRadius: '10px',
@@ -35,12 +35,12 @@ const ShareModal: React.FC<ShareModalProps> = ({ groupCode, isOpen, onClose }) =
   };
   
   const shareToWhatsApp = () => {
-    const text = encodeURIComponent(`Join my Boom Bag group with code: ${groupCode}\n${inviteLink}`);
+    const text = encodeURIComponent(`Rejoins mon groupe Boom Bag avec le code : ${groupCode}\n${inviteLink}`);
     window.open(`https://wa.me/?text=${text}`, '_blank');
   };
 
   const shareToTelegram = () => {
-    const text = encodeURIComponent(`Join my Boom Bag group with code: ${groupCode}`);
+    const text = encodeURIComponent(`Rejoins mon groupe Boom Bag avec le code : ${groupCode}`);
     window.open(`https://t.me/share/url?url=${encodeURIComponent(inviteLink)}&text=${text}`, '_blank');
   };
 
@@ -48,8 +48,8 @@ const ShareModal: React.FC<ShareModalProps> = ({ groupCode, isOpen, onClose }) =
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Join my Boom Bag group!',
-          text: 'I invite you to join my Boom Bag group',
+          title: 'Rejoins mon groupe Boom Bag !',
+          text: 'Je t’invite à rejoindre mon groupe Boom Bag',
           url: inviteLink,
         });
       } catch (err) {
@@ -94,7 +94,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ groupCode, isOpen, onClose }) =
             <div className="bg-gradient-to-r from-primary/90 to-primary p-5 text-white relative">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-success via-primary to-secondary"></div>
               <div className="flex justify-between items-center">
-                <h3 className="text-xl font-bold text-primary-dark">Share Invitation</h3>
+                <h3 className="text-xl font-bold text-primary-dark">Partager l'invitation</h3>
                 <motion.button 
                   className="text-primary-light hover:text-primary-dark bg-gray rounded-full p-1.5"
                   onClick={onClose}
@@ -104,14 +104,14 @@ const ShareModal: React.FC<ShareModalProps> = ({ groupCode, isOpen, onClose }) =
                   <X className="h-5 w-5" />
                 </motion.button>
               </div>
-              <p className="text-sm text-primary mt-1">Invite friends to join your group</p>
+              <p className="text-sm text-primary mt-1">Invitez vos amis à rejoindre votre groupe</p>
             </div>
             
             <div className="p-6 space-y-5">
               {/* Invite Link */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-text-primary">
-                  Invite Link
+                  Lien d'invitation
                 </label>
                 <div className="mt-1 flex rounded-lg shadow-sm overflow-hidden">
                   <div className="relative flex-grow focus-within:z-10">
@@ -136,12 +136,12 @@ const ShareModal: React.FC<ShareModalProps> = ({ groupCode, isOpen, onClose }) =
                     {copied === 'link' ? (
                       <>
                         <Check className="h-4 w-4" />
-                        <span>Copied</span>
+                        <span>Copié</span>
                       </>
                     ) : (
                       <>
                         <Copy className="h-4 w-4" />
-                        <span>Copy</span>
+                        <span>Copier</span>
                       </>
                     )}
                   </motion.button>
@@ -151,7 +151,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ groupCode, isOpen, onClose }) =
               {/* Invite Code */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-text-primary">
-                  Invite Code
+                  Code d'invitation
                 </label>
                 <div className="flex items-center justify-center relative">
                   <motion.div 
@@ -179,7 +179,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ groupCode, isOpen, onClose }) =
               {/* Share Options */}
               <div className="pt-2">
                 <div className="text-sm font-medium text-text-primary mb-3">
-                  Share via
+                  Partager via
                 </div>
                 
                 <div className="grid grid-cols-2 gap-3">

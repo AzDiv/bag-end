@@ -24,17 +24,17 @@ const PendingUsersTable: React.FC<PendingUsersTableProps> = ({ users, processing
     {users.length === 0 ? (
       <div className="text-center py-12">
         <Users className="h-12 w-12 mx-auto text-gray-400" />
-        <p className="mt-2 text-gray-500">No pending verifications</p>
+        <p className="mt-2 text-gray-500">Aucune vérification en attente</p>
       </div>
     ) : (
       <>
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilisateur</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plan</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Referred By</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date d'adhésion</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Parrainé par</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">WhatsApp</th>
               <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
@@ -80,7 +80,7 @@ const PendingUsersTable: React.FC<PendingUsersTableProps> = ({ users, processing
                       className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                     >
                       <CheckCircle className="h-4 w-4 mr-1" />
-                      Verify
+                      Vérifier
                     </button>
                     <button
                       onClick={() => onReject(user.id)}
@@ -88,7 +88,7 @@ const PendingUsersTable: React.FC<PendingUsersTableProps> = ({ users, processing
                       className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                     >
                       <XCircle className="h-4 w-4 mr-1" />
-                      Reject
+                      Rejeter
                     </button>
                   </div>
                 </td>
@@ -98,8 +98,8 @@ const PendingUsersTable: React.FC<PendingUsersTableProps> = ({ users, processing
         </table>
         {/* Pagination placeholder */}
         <div className="flex justify-end mt-4">
-          <button className="px-3 py-1 text-xs bg-gray-200 rounded mr-2" disabled>Prev</button>
-          <button className="px-3 py-1 text-xs bg-gray-200 rounded" disabled>Next</button>
+          <button className="px-3 py-1 text-xs bg-gray-200 rounded mr-2" disabled>Précédent</button>
+          <button className="px-3 py-1 text-xs bg-gray-200 rounded" disabled>Suivant</button>
         </div>
       </>
     )}

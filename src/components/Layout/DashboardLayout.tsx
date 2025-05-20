@@ -28,16 +28,16 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navigation = user?.role === 'admin' ? [
-    { name: 'Dashboard', icon: BarChart3, href: '/admin' },
-    { name: 'Verify Users', icon: Shield, href: '/admin/verify' },
-    { name: 'Groups Repair', icon: Wrench, href: '/admin/groups-repair' },
-    { name: 'Users', icon: Users, href: '/admin/users' },
+    { name: 'Tableau de bord', icon: BarChart3, href: '/admin' },
+    { name: 'Vérifier les utilisateurs', icon: Shield, href: '/admin/verify' },
+    { name: 'Réparer les groupes', icon: Wrench, href: '/admin/groups-repair' },
+    { name: 'Utilisateurs', icon: Users, href: '/admin/users' },
     // Removed Settings from admin navigation
   ] : [
-    { name: 'Dashboard', icon: Home, href: '/dashboard' },
-    { name: 'My Groups', icon: Users, href: '/groups' },
-    { name: 'Invite Members', icon: UserPlus, href: '/invite' },
-    { name: 'Settings', icon: Settings, href: '/settings' },
+    { name: 'Tableau de bord', icon: Home, href: '/dashboard' },
+    { name: 'Mes groupes', icon: Users, href: '/groups' },
+    { name: 'Inviter des membres', icon: UserPlus, href: '/invite' },
+    { name: 'Paramètres', icon: Settings, href: '/settings' },
   ];
 
   const handleSignOut = async () => {
@@ -74,7 +74,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
                   onClick={closeSidebar}
                 >
-                  <span className="sr-only">Close sidebar</span>
+                  <span className="sr-only">Fermer la barre latérale</span>
                   <X className="h-6 w-6 text-white" />
                 </button>
               </div>
@@ -83,7 +83,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 <div className="flex-shrink-0 flex items-center px-4">
                   <Link to="/" className="flex items-center">
                     <div>
-                      <img src={logoo} alt="Boom Bag Logo" className="h-12" />
+                      <img src={logoo} alt="Logo Boom Bag" className="h-12" />
                     </div>
                   </Link>
                 </div>
@@ -126,7 +126,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                         className="mt-1 text-sm font-medium text-gray-500 group-hover:text-gray-700 flex items-center"
                       >
                         <LogOut className="mr-2 h-4 w-4" />
-                        Sign out
+                        Déconnexion
                       </button>
                     </div>
                   </div>
@@ -145,7 +145,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               <div className="flex items-center flex-shrink-0 px-4">
                 <Link to="/" className="flex items-center">
                   <div>
-                    <img src={logoo} alt="Boom Bag Logo" className="h-12" />
+                    <img src={logoo} alt="Logo Boom Bag" className="h-12" />
                   </div>
                 </Link>
               </div>
@@ -182,14 +182,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                       {user?.name}
                     </p>
                     <p className="text-xs font-medium text-gray-500">
-                      {user?.status === 'active' ? 'Verified Account' : 'Pending Verification'}
+                      {user?.status === 'active' ? 'Compte vérifié' : 'Vérification en attente'}
                     </p>
                     <button
                       onClick={handleSignOut}
                       className="mt-2 text-sm font-medium text-gray-500 group-hover:text-gray-700 flex items-center"
                     >
                       <LogOut className="mr-2 h-4 w-4" />
-                      Sign out
+                      Déconnexion
                     </button>
                   </div>
                 </div>
@@ -207,7 +207,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
             onClick={() => setSidebarOpen(true)}
           >
-            <span className="sr-only">Open sidebar</span>
+            <span className="sr-only">Ouvrir la barre latérale</span>
             <Menu className="h-6 w-6" />
           </button>
         </div>

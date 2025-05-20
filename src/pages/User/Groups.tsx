@@ -111,7 +111,7 @@ const Groups: React.FC = () => {
   return (
     <DashboardLayout>
       <div className="max-w-6xl mx-auto py-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">My Groups</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-6">Mes groupes</h1>
         
         {loading ? (
           <div className="flex justify-center items-center py-12">
@@ -122,13 +122,13 @@ const Groups: React.FC = () => {
             {groups.length === 0 ? (
               <div className="bg-white rounded-xl shadow-md p-6 text-center">
                 <Users className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No Groups Yet</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun groupe pour le moment</h3>
                 <p className="text-gray-600 mb-6">
-                  You'll automatically get your first group once your account is verified.
+                  Vous obtiendrez automatiquement votre premier groupe une fois votre compte vérifié.
                 </p>
                 {user?.status === 'pending' && (
                   <p className="text-blue-600">
-                    Your account is pending verification. Please be patient.
+                    Votre compte est en attente de vérification. Veuillez patienter.
                   </p>
                 )}
               </div>
@@ -138,7 +138,7 @@ const Groups: React.FC = () => {
                 <div className="md:col-span-1">
                   <div className="bg-white rounded-xl shadow-md overflow-hidden">
                     <div className="px-6 py-4 border-b border-gray-200">
-                      <h3 className="text-lg font-medium text-gray-900">Your Groups</h3>
+                      <h3 className="text-lg font-medium text-gray-900">Vos groupes</h3>
                     </div>
                     
                     <div className="divide-y divide-gray-200">
@@ -158,9 +158,9 @@ const Groups: React.FC = () => {
                             </div>
                             <div className="ml-3">
                               <h4 className="font-medium text-gray-900">
-                                Level {group.group_number} Group
+                                Groupe niveau  {group.group_number}
                               </h4>
-                              <p className="text-sm text-gray-500">Code: {group.code}</p>
+                              <p className="text-sm text-gray-500">Code : {group.code}</p>
                             </div>
                           </div>
                         </button>
@@ -180,7 +180,7 @@ const Groups: React.FC = () => {
                     >
                       <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                         <h3 className="text-lg font-medium text-gray-900">
-                          Group Members
+                          Membres du groupe
                         </h3>
                         <button
                           onClick={() => {
@@ -190,7 +190,7 @@ const Groups: React.FC = () => {
                           className="flex items-center text-sm text-primary hover:text-primary-dark"
                         >
                           <UserPlus className="h-4 w-4 mr-1" />
-                          Invite
+                          Inviter
                         </button>
                       </div>
                       
@@ -206,7 +206,7 @@ const Groups: React.FC = () => {
                             <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
                               <div className="w-24 h-24 rounded-full bg-primary text-white flex flex-col items-center justify-center shadow-lg border-4 border-white">
                                 <Users className="h-10 w-10 mb-1" />
-                                <span className="text-xs font-semibold">Owner</span>
+                                <span className="text-xs font-semibold">Propriétaire</span>
                               </div>
                             </div>
                             {/* Members around in a circle, with extra vertical margin to avoid overlap with owner */}
@@ -235,10 +235,10 @@ const Groups: React.FC = () => {
                                       <svg className="h-3 w-3 mr-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 5.636l-12.728 12.728M5.636 5.636l12.728 12.728" />
                                       </svg>
-                                      Rejected
+                                      Rejeté
                                     </span>
                                   ) : member.owner_confirmed ? (
-                                    <span className="text-green-500 text-xs font-semibold whitespace-nowrap mt-1">✔ Confirmed</span>
+                                    <span className="text-green-500 text-xs font-semibold whitespace-nowrap mt-1">✔ Confirmé</span>
                                   ) : (
                                     user && groups.find(g => g.id === selectedGroup)?.owner_id === user.id && (
                                       <button
@@ -248,7 +248,7 @@ const Groups: React.FC = () => {
                                           handleConfirmMember(member.invite_id);
                                         }}
                                       >
-                                        Confirm
+                                        Confirmer
                                       </button>
                                     )
                                   )}
@@ -257,7 +257,7 @@ const Groups: React.FC = () => {
                             })}
                           </div>
                           {members.length === 0 && (
-                            <div className="text-gray-400 mt-8">No members in this group yet. Start inviting people!</div>
+                            <div className="text-gray-400 mt-8">Aucun membre dans ce groupe pour le moment. Commencez à inviter des personnes !</div>
                           )}
                         </div>
                       )}

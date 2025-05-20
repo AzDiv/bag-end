@@ -24,7 +24,7 @@ interface MembersListProps {
 
 const MembersList: React.FC<MembersListProps> = ({ 
   members, 
-  emptyMessage = 'No members found',
+  emptyMessage = 'Aucun membre trouvé',
   onMemberClick,
   onConfirmMember,
   isOwner = false
@@ -63,7 +63,7 @@ const MembersList: React.FC<MembersListProps> = ({
                 <div className="ml-4">
                   <div className="text-sm font-medium text-text-primary">{member.name}</div>
                   <div className="text-sm text-text-secondary">{member.email}</div>
-                  <div className="text-sm text-text-secondary">{member.whatsapp ? `WhatsApp: ${member.whatsapp}` : ''}</div>
+                  <div className="text-sm text-text-secondary">{member.whatsapp ? `WhatsApp : ${member.whatsapp}` : ''}</div>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
@@ -80,17 +80,17 @@ const MembersList: React.FC<MembersListProps> = ({
                   {member.status === 'active' ? (
                     <>
                       <Check className="mr-1 h-3 w-3" />
-                      Verified
+                      Vérifié
                     </>
                   ) : member.status === 'rejected' ? (
                     <>
                       <AlertCircle className="mr-1 h-3 w-3" />
-                      Rejected
+                      Rejeté
                     </>
                   ) : (
                     <>
                       <Clock className="mr-1 h-3 w-3" />
-                      Pending
+                      En attente
                     </>
                   )}
                 </span>

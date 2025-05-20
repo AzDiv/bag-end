@@ -36,11 +36,11 @@ const MemberInfoModal: React.FC<MemberInfoModalProps> = ({ isOpen, member, loadi
         <button
           className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors"
           onClick={onClose}
-          aria-label="Close"
+          aria-label="Fermer"
         >
           <X className="h-5 w-5" />
         </button>
-        <h2 className="text-xl font-semibold mb-6 text-gray-800 border-b pb-3">Member Info</h2>
+        <h2 className="text-xl font-semibold mb-6 text-gray-800 border-b pb-3">Informations du membre</h2>
         
         {loading ? (
           <div className="flex justify-center items-center py-10">
@@ -52,7 +52,7 @@ const MemberInfoModal: React.FC<MemberInfoModalProps> = ({ isOpen, member, loadi
               <div className="flex items-center justify-center w-10">
                 <User className="h-5 w-5 text-gray-500" />
               </div>
-              <span className="font-medium w-24 text-gray-600">Name:</span> 
+              <span className="font-medium w-24 text-gray-600">Nom :</span> 
               <span className="text-gray-800 font-medium">{member.name}</span>
             </div>
             
@@ -60,7 +60,7 @@ const MemberInfoModal: React.FC<MemberInfoModalProps> = ({ isOpen, member, loadi
               <div className="flex items-center justify-center w-10">
                 <Mail className="h-5 w-5 text-gray-500" />
               </div>
-              <span className="font-medium w-24 text-gray-600">Email:</span> 
+              <span className="font-medium w-24 text-gray-600">E-mail :</span> 
               <span className="text-gray-800">{member.email}</span>
             </div>
             
@@ -68,7 +68,7 @@ const MemberInfoModal: React.FC<MemberInfoModalProps> = ({ isOpen, member, loadi
               <div className="flex items-center justify-center w-10">
                 <AlertCircle className="h-5 w-5 text-gray-500" />
               </div>
-              <span className="font-medium w-24 text-gray-600">Status:</span> 
+              <span className="font-medium w-24 text-gray-600">Statut :</span> 
               <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(member.status)}`}>
                 {member.status}
               </span>
@@ -78,7 +78,7 @@ const MemberInfoModal: React.FC<MemberInfoModalProps> = ({ isOpen, member, loadi
               <div className="flex items-center justify-center w-10">
                 <Clock className="h-5 w-5 text-gray-500" />
               </div>
-              <span className="font-medium w-24 text-gray-600">Joined:</span> 
+              <span className="font-medium w-24 text-gray-600">Inscrit le :</span> 
               <span className="text-gray-800">{member.created_at ? new Date(member.created_at).toLocaleDateString() : '-'}</span>
             </div>
             
@@ -86,14 +86,14 @@ const MemberInfoModal: React.FC<MemberInfoModalProps> = ({ isOpen, member, loadi
               <div className="flex items-center justify-center w-10">
                 <Phone className="h-5 w-5 text-gray-500" />
               </div>
-              <span className="font-medium w-24 text-gray-600">WhatsApp:</span> 
+              <span className="font-medium w-24 text-gray-600">WhatsApp :</span> 
               <span className="text-gray-800">{member.whatsapp || '-'}</span>
               
               {member.whatsapp && (
                 <button 
                   onClick={() => copyToClipboard(member.whatsapp)}
                   className="ml-3 p-1.5 rounded-md hover:bg-gray-100 transition-colors border border-gray-200"
-                  title="Copy phone number"
+                  title="Copier le numéro de téléphone"
                 >
                   {copied ? 
                     <CheckCheck className="h-4 w-4 text-green-500" /> : 
@@ -107,7 +107,7 @@ const MemberInfoModal: React.FC<MemberInfoModalProps> = ({ isOpen, member, loadi
               <div className="flex items-start mt-4 bg-yellow-50 p-3 rounded-md">
                 <AlertCircle className="h-5 w-5 text-yellow-600 mr-2 flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-yellow-700">
-                  This member is waiting for admin verification.
+                  Ce membre attend la vérification de l'administrateur.
                 </p>
               </div>
             )}
@@ -116,7 +116,7 @@ const MemberInfoModal: React.FC<MemberInfoModalProps> = ({ isOpen, member, loadi
               <div className="flex items-start mt-4 bg-green-50 p-3 rounded-md">
                 <CheckCircle className="h-5 w-5 text-green-600 mr-2 flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-green-700">
-                  This member is fully verified and confirmed. They count towards your group progression.
+                  Ce membre est entièrement vérifié et confirmé. Il compte pour votre progression de groupe.
                 </p>
               </div>
             )}
@@ -125,7 +125,7 @@ const MemberInfoModal: React.FC<MemberInfoModalProps> = ({ isOpen, member, loadi
               <div className="flex items-start mt-4 bg-blue-50 p-3 rounded-md">
                 <AlertCircle className="h-5 w-5 text-blue-600 mr-2 flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-blue-700">
-                  This member is verified by admin. Please confirm them to count towards your group progression.
+                  Ce membre est vérifié par l'administrateur. Veuillez le confirmer pour qu'il compte dans votre progression de groupe.
                 </p>
               </div>
             )}
@@ -134,13 +134,13 @@ const MemberInfoModal: React.FC<MemberInfoModalProps> = ({ isOpen, member, loadi
               <div className="flex items-start mt-4 bg-red-50 p-3 rounded-md">
                 <AlertCircle className="h-5 w-5 text-red-600 mr-2 flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-red-700">
-                  This member was rejected and does not count towards group progression.
+                  Ce membre a été rejeté et ne compte pas pour la progression du groupe.
                 </p>
               </div>
             )}
           </div>
         ) : (
-          <div className="text-gray-500 py-6 text-center">No member data found.</div>
+          <div className="text-gray-500 py-6 text-center">Aucune donnée de membre trouvée.</div>
         )}
       </div>
     </div>
