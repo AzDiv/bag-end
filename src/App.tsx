@@ -14,6 +14,7 @@ import Settings from './pages/User/Settings';
 import VerifyUsers from './pages/Admin/VerifyUsers';
 import GroupsRepair from './pages/Admin/GroupsRepair';
 import Users from './pages/Admin/Users';
+import JoinGroup from './pages/User/JoinGroup';
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ 
@@ -113,6 +114,11 @@ function App() {
       <Route path="/settings" element={
         <ProtectedRoute>
           <Settings />
+        </ProtectedRoute>
+      } />
+      <Route path="/join-group" element={
+        <ProtectedRoute>
+          <JoinGroup />
         </ProtectedRoute>
       } />
 

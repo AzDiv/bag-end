@@ -62,31 +62,32 @@ export async function getUserWithGroups(userId: string) {
     return { ...user, groups: [] };
   }
 
-  // Attach members and verified_members counts to each group
+  // Attach members and verified_members counts to each group using invites
   const groupsWithCounts = await Promise.all(
     groups.map(async (group) => {
-      // Count users who joined with this group's code
+      // Count all members in this group (invites)
       const { count: membersCount } = await supabase
-        .from('users')
+        .from('invites')
         .select('id', { count: 'exact', head: true })
-        .eq('invite_code', group.code);
-      // Count verified members: users with invite_code = group.code and status = 'active'
-      const { count: verifiedCount } = await supabase
-        .from('users')
-        .select('id', { count: 'exact', head: true })
-        .eq('invite_code', group.code)
-        .eq('status', 'active');
-      // Count users who joined with this group's code but are not rejected
-      const { count: groupUserCount, error: groupUserCountError } = await supabase
-        .from('users')
-        .select('id', { count: 'exact', head: true })
-        .eq('invite_code', group.code)
-        .neq('status', 'rejected');
+        .eq('group_id', group.id);
+      // Count verified members: owner_confirmed = true AND user.status = 'active'
+      const { data: inviteRows } = await supabase
+        .from('invites')
+        .select('referred_user_id, owner_confirmed, users:referred_user_id(status)')
+        .eq('group_id', group.id)
+        .eq('owner_confirmed', true);
+      const verifiedCount = (inviteRows || []).filter(row => {
+        if (Array.isArray(row.users)) {
+          return row.users[0]?.status === 'active';
+        } else if (row.users) {
+          return (row.users as any).status === 'active';
+        }
+        return false;
+      }).length;
       return {
         ...group,
         members: membersCount || 0,
         verified_members: verifiedCount || 0,
-        groupUserCount: groupUserCount || 0,
       };
     })
   );
@@ -467,4 +468,78 @@ export async function getRecentAdminLogs() {
   );
 
   return logs;
+}
+
+export async function joinGroupAsExistingUser(userId: string, groupCode: string) {
+  // Fetch user
+  const { data: user, error: userError } = await supabase
+    .from('users')
+    .select('id, current_level, status')
+    .eq('id', userId)
+    .single();
+  if (userError || !user) return { success: false, error: 'Utilisateur introuvable.' };
+
+  // Fetch group
+  const { data: group, error: groupError } = await supabase
+    .from('groups')
+    .select('id, group_number, owner_id')
+    .eq('code', groupCode)
+    .single();
+  if (groupError || !group) return { success: false, error: 'Groupe introuvable.' };
+
+  // 1. Check level match
+  if (user.current_level !== group.group_number) {
+    return { success: false, error: `Vous devez être au niveau ${group.group_number} pour rejoindre ce groupe.` };
+  }
+
+  // 2. Check group is not full (count verified members)
+  const { data: inviteRows } = await supabase
+    .from('invites')
+    .select('referred_user_id, owner_confirmed, users:referred_user_id(status)')
+    .eq('group_id', group.id)
+    .eq('owner_confirmed', true);
+
+  const verifiedCount = (inviteRows || []).filter(row => {
+    if (Array.isArray(row.users)) {
+      return row.users[0]?.status === 'active';
+    } else if (row.users) {
+      return (row.users as any).status === 'active';
+    }
+    return false;
+  }).length;
+
+  if (verifiedCount >= 4) {
+    return { success: false, error: 'Ce groupe est complet.' };
+  }
+
+  // 2.1 Prevent duplicate invite for this user in this group
+  const { count: existingInviteCount } = await supabase
+    .from('invites')
+    .select('id', { count: 'exact', head: true })
+    .eq('group_id', group.id)
+    .eq('referred_user_id', user.id);
+  if ((existingInviteCount ?? 0) > 0) {
+    return { success: false, error: 'Vous êtes déjà membre de ce groupe.' };
+  }
+
+  // 3. Prevent duplicate invite for same user/group
+  const { data: existingInvite, error: existingInviteError } = await supabase
+    .from('invites')
+    .select('id')
+    .eq('group_id', group.id)
+    .eq('referred_user_id', user.id)
+    .single();
+  if (existingInvite) {
+    return { success: false, error: 'Vous avez déjà demandé à rejoindre ce groupe.' };
+  }
+  // 4. Insert invite (do not update user's invite_code or referred_by)
+  const { error: inviteInsertError } = await supabase.from('invites').insert({
+    group_id: group.id,
+    inviter_id: group.owner_id,
+    referred_user_id: user.id,
+    owner_confirmed: false
+  });
+  if (inviteInsertError) return { success: false, error: 'Impossible de rejoindre le groupe.' };
+
+  return { success: true };
 }

@@ -68,6 +68,7 @@ const Settings: React.FC = () => {
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     placeholder="votre@email.com"
+                    disabled
                   />
                 </div>
                 

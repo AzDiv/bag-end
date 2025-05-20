@@ -6,7 +6,8 @@ import PlanSelection from '../../components/UI/PlanSelection';
 import ProgressStats from '../../components/UI/ProgressStats';
 import GroupCard from '../../components/UI/GroupCard';
 import ShareModal from '../../components/UI/ShareModal';
-import { getUserWithGroups } from '../../lib/supabase';
+import JoinGroupModal from '../../components/UI/JoinGroupModal';
+import { getUserWithGroups, joinGroupAsExistingUser } from '../../lib/supabase';
 import { UserWithGroupDetails, Group } from '../../types/database.types';
 import { AlertCircle, InfoIcon, CheckCircle, Link2, AlertTriangle } from 'lucide-react';
 import PaymentInstructions from '../../components/UI/PaymentInstruction'; 
@@ -17,6 +18,8 @@ const Dashboard: React.FC = () => {
   const [userData, setUserData] = useState<UserWithGroupDetails | null>(null);
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [selectedGroupCode, setSelectedGroupCode] = useState('');
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  const [joinError, setJoinError] = useState('');
   
   useEffect(() => {
     const fetchUserData = async () => {
@@ -44,6 +47,19 @@ const Dashboard: React.FC = () => {
   const handleShareGroup = (groupCode: string) => {
     setSelectedGroupCode(groupCode);
     setShareModalOpen(true);
+  };
+  
+  const handleJoinGroup = async (groupCode: string) => {
+    setJoinError('');
+    if (!user) return { success: false, error: 'Utilisateur non connecté.' };
+    const result = await joinGroupAsExistingUser(user.id, groupCode);
+    if (!result.success) setJoinError(result.error || 'Erreur inconnue');
+    else {
+      // Optionally refresh user data after joining
+      await refreshUser();
+      setTimeout(() => setShowJoinModal(false), 1200);
+    }
+    return result;
   };
   
   // Show plan selection if user hasn't selected a plan yet
@@ -243,6 +259,24 @@ const Dashboard: React.FC = () => {
           isOpen={shareModalOpen} 
           onClose={() => setShareModalOpen(false)} 
         />
+        
+        {/* Join Group Modal */}
+        {showJoinModal && (
+          <JoinGroupModal
+            onClose={() => setShowJoinModal(false)}
+            onJoin={handleJoinGroup}
+            errorMessage={joinError}
+          />
+        )}
+        
+        {/* Add Join Group button for logged-in users */}
+        {user && user.status === 'active' && (
+          <div className="mb-6 flex justify-end">
+            <button className="btn-primary" onClick={() => setShowJoinModal(true)}>
+              Rejoindre un groupe
+            </button>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );

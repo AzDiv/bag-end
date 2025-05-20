@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, User, Mail, Clock, Phone, AlertCircle, CheckCircle, Copy, CheckCheck } from 'lucide-react';
+  import { X, User, Mail, Clock, Phone, AlertCircle, CheckCircle, Copy, CheckCheck } from 'lucide-react';
 
 interface MemberInfoModalProps {
   isOpen: boolean;
