@@ -270,13 +270,7 @@ const Dashboard: React.FC = () => {
         )}
         
         {/* Add Join Group button for logged-in users */}
-        {user && user.status === 'active' && (
-          <div className="mb-6 flex justify-end">
-            <button className="btn-primary" onClick={() => setShowJoinModal(true)}>
-              Rejoindre un groupe
-            </button>
-          </div>
-        )}
+
       </div>
     </DashboardLayout>
   );

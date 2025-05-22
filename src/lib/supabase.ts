@@ -263,16 +263,27 @@ export async function confirmGroupMember(inviteId: string) {
     return false;
   }
 
-  // Fetch the invite to get the referred_user_id
+  // Fetch the invite to get the referred_user_id and group_id
   const { data: invite } = await supabase
     .from('invites')
-    .select('referred_user_id')
+    .select('referred_user_id, group_id')
     .eq('id', inviteId)
     .single();
 
-  if (invite?.referred_user_id) {
-    // Try to create group for this user (in case they are now eligible)
-    await createGroupIfNeeded(invite.referred_user_id);
+  if (invite?.referred_user_id && invite?.group_id) {
+    // Fetch the group to get its group_number
+    const { data: group } = await supabase
+      .from('groups')
+      .select('group_number')
+      .eq('id', invite.group_id)
+      .single();
+    if (group && group.group_number > 1) {
+      // Try to create next group for this user (in case they are now eligible)
+      await createNextGroupIfEligible(invite.referred_user_id);
+    } else if (group && group.group_number === 1) {
+      // For group 1, only create group if needed (original logic)
+      await createGroupIfNeeded(invite.referred_user_id);
+    }
   }
 
   return true;
@@ -327,44 +338,66 @@ export async function createNextGroupIfEligible(userId: string) {
   // Calculate next group number before logging
   const nextGroupNumber = lastGroup.group_number + 1;
 
-  // Debug logs for troubleshooting
-  console.log('createNextGroupIfEligible debug:', {
-    groupId: lastGroup.id,
-    inviteRows,
-    verifiedCount,
-    nextGroupNumber,
-    alreadyExists: groups.some(g => g.group_number === nextGroupNumber),
-    canCreate: (verifiedCount ?? 0) >= 4
-  });
+  // If there are 4 verified members and user is at this level, increment their level (but do not create next group yet)
+  if ((verifiedCount ?? 0) >= 4) {
+    // Fetch user to check current_level
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('current_level')
+      .eq('id', userId)
+      .single();
+    if (!userError && user && user.current_level === lastGroup.group_number) {
+      await supabase
+        .from('users')
+        .update({ current_level: nextGroupNumber })
+        .eq('id', userId);
+    }
+  }
 
   // Check if the next group already exists (guard against duplicate creation)
   if (groups.some(g => g.group_number === nextGroupNumber)) return false;
 
-  // If there are 4 verified members, create the next group
-  if ((verifiedCount ?? 0) >= 4) {
-    const { error: createError } = await supabase
-      .from('groups')
-      .insert({
-        owner_id: userId,
-        code: generateGroupCode(),
-        group_number: nextGroupNumber
-      });
+  // --- NEW: Only create the next group if user is confirmed as a member in a group at this level ---
+  // Get all confirmed invites for this user
+  const { data: userInvites, error: userInvitesError } = await supabase
+    .from('invites')
+    .select('owner_confirmed, group_id')
+    .eq('referred_user_id', userId)
+    .eq('owner_confirmed', true);
 
-    if (createError) {
-      console.error('Error creating next group:', createError);
-      return false;
+  let confirmedAtLevel = false;
+  if (userInvites && userInvites.length > 0) {
+    for (const invite of userInvites) {
+      if (!invite.group_id) continue;
+      const { data: groupData } = await supabase
+        .from('groups')
+        .select('group_number')
+        .eq('id', invite.group_id)
+        .single();
+      if (groupData && groupData.group_number === nextGroupNumber) {
+        confirmedAtLevel = true;
+        break;
+      }
     }
-
-    // Set user's current_level to nextGroupNumber (1, 2, 3)
-    await supabase
-      .from('users')
-      .update({ current_level: nextGroupNumber })
-      .eq('id', userId);
-
-    return true;
   }
 
-  return false;
+  if (!confirmedAtLevel) return false;
+
+  // Create the next group
+  const { error: createError } = await supabase
+    .from('groups')
+    .insert({
+      owner_id: userId,
+      code: generateGroupCode(),
+      group_number: nextGroupNumber
+    });
+
+  if (createError) {
+    console.error('Error creating next group:', createError);
+    return false;
+  }
+
+  return true;
 }
 
 /**
