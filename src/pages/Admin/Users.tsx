@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
-import { supabase } from '../../lib/supabase';
 import { Users as UsersIcon, Pencil } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { updateUserStatus, getAllUsers } from '../../lib/supabase';
 
 interface UserRow {
   id: string;
@@ -33,18 +33,15 @@ const Users: React.FC = () => {
     const fetchUsers = async () => {
       setLoading(true);
       try {
-        let query = supabase
-          .from('users')
-          .select('id, name, email, pack_type, created_at, referred_by, whatsapp, status')
-          .order('created_at', { ascending: false })
-          .limit(50);
-        if (search.trim()) {
-          // Search by email, whatsapp, or name (case-insensitive)
-          query = query.or(`email.ilike.%${search}%,whatsapp.ilike.%${search}%,name.ilike.%${search}%`);
+        const token = localStorage.getItem('jwt_token');
+        let users: UserRow[] = [];
+        if (token) {
+          const result = await getAllUsers(token);
+          if (result.success && Array.isArray(result.users)) {
+            users = result.users;
+          }
         }
-        const { data, error } = await query;
-        if (error) throw error;
-        setUsers(data || []);
+        setUsers(users || []);
       } catch (e) {
         // Optionally use toast here
       } finally {
@@ -68,18 +65,19 @@ const Users: React.FC = () => {
     if (!window.confirm(`Êtes-vous sûr de vouloir changer le statut de cet utilisateur en "${statusEditValue}" ?`)) return;
     setSavingStatus(true);
     try {
-      const { error } = await supabase
-        .from('users')
-        .update({ status: statusEditValue })
-        .eq('id', userId);
-      if (error) throw error;
-      setUsers(prev => prev.map(u => u.id === userId ? { ...u, status: statusEditValue } : u));
-      toast.success('Statut de l\'utilisateur mis à jour');
-      setStatusEditId(null);
+      const token = localStorage.getItem('jwt_token');
+      if (!token) throw new Error('Not authenticated');
+      const result = await updateUserStatus(userId, statusEditValue, token);
+      if (result.success) {
+        setUsers(prev => prev.map(u => u.id === userId ? { ...u, status: statusEditValue } : u));
+      } else {
+        throw new Error(result.error);
+      }
     } catch (e) {
-      toast.error('Échec de la mise à jour du statut utilisateur');
+      // Optionally use toast here
     } finally {
       setSavingStatus(false);
+      setStatusEditId(null);
     }
   };
 

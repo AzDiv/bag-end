@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
 import { useAuthStore } from '../../store/authStore';
 import { getDashboardStats, getPendingVerifications, updateUserStatus, createNextGroupIfEligible, findUsersMissingNextGroup, getUserById, getRecentAdminLogs } from '../../lib/supabase';
-import { supabase } from '../../lib/supabase';
 import { User, AdminDashboardStats } from '../../types/database.types';
 import { Users, UserCheck, Target, Award, CheckCircle, XCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -20,64 +19,43 @@ const AdminDashboard: React.FC = () => {
   const [logs, setLogs] = useState<LogEntry[]>([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const [statsData, pendingData] = await Promise.all([
-          getDashboardStats(),
-          getPendingVerifications()
-        ]);
-        
-        setStats(statsData);
-        setPendingUsers(pendingData);
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-        toast.error('Failed to load dashboard data');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-
-    // Refresh data every 120 seconds
-    const interval = setInterval(fetchData, 120000);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    getRecentAdminLogs().then(logs => {
-      // Convert logs to ensure level is of the correct type
-      setLogs(logs.map(log => ({
+    const token = localStorage.getItem('jwt_token');
+    if (!token) return;
+    Promise.all([
+      getDashboardStats(token),
+      getPendingVerifications(token)
+    ]).then(([stats, pendingUsers]) => {
+      setStats(stats);
+      setPendingUsers(pendingUsers);
+      setLoading(false);
+    });
+    getRecentAdminLogs(token).then(logs => {
+      setLogs(logs.map((log: any) => ({
         ...log,
-        level: log.level as "error" | "info" | "warning" | undefined
+        created_at: new Date(log.created_at)
       })));
     });
   }, []);
 
   const handleVerification = async (userId: string, status: 'active' | 'pending' | 'rejected') => {
+    const token = localStorage.getItem('jwt_token');
+    if (!token) return;
     setProcessingIds(prev => new Set(prev).add(userId));
     try {
-      const success = await updateUserStatus(userId, status);
-
-      if (success) {
+      const result = await updateUserStatus(userId, status, token);
+      if (result.success) {
         setPendingUsers(prev => prev.filter(user => user.id !== userId));
         toast.success(`User ${status === 'active' ? 'verified' : status === 'rejected' ? 'rejected' : 'set to pending'} successfully`);
 
         // --- ADD THIS: If user is now active, check if their inviter (group owner) is eligible for next group ---
         if (status === 'active') {
           // Fetch the user to get their invite_code
-          const user = await getUserById(userId);
+          const token = localStorage.getItem('jwt_token');
+          const user = await getUserById(userId, token!);
           if (user?.invite_code) {
             // Find the group owner by invite_code
-            const { data: group } = await supabase
-              .from('groups')
-              .select('owner_id')
-              .eq('code', user.invite_code)
-              .single();
-            if (group?.owner_id) {
-              await createNextGroupIfEligible(group.owner_id);
-            }
+            const groupOwnerId = user.invite_code; // Assuming invite_code is the group owner's ID
+            await createNextGroupIfEligible(groupOwnerId, token!);
           }
         }
       } else {
@@ -97,16 +75,15 @@ const AdminDashboard: React.FC = () => {
 
   const handleCheckMissingGroups = async () => {
     setCheckingMissing(true);
-    const result = await findUsersMissingNextGroup();
+    const token = localStorage.getItem('jwt_token');
+    const result = await findUsersMissingNextGroup(token!);
     setMissingGroups(result);
     setCheckingMissing(false);
   };
 
   const handleFixGroup = async (userId: string) => {
-    await createNextGroupIfEligible(userId);
-    toast.success('Next group created (if eligible)');
-    // Optionally refresh missingGroups
-    handleCheckMissingGroups();
+    const token = localStorage.getItem('jwt_token');
+    await createNextGroupIfEligible(userId, token!);
   };
 
   if (!user || user.role !== 'admin') {

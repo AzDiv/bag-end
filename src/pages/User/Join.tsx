@@ -16,7 +16,8 @@ const Join: React.FC = () => {
     const tryJoin = async () => {
       if (user && code) {
         setStatus('joining');
-        const result = await joinGroupAsExistingUser(user.id, code);
+        const token = localStorage.getItem('jwt_token');
+        const result = await joinGroupAsExistingUser(user.id, code, token!);
         if (result.success) {
           setStatus('success');
           await refreshUser();
@@ -25,12 +26,12 @@ const Join: React.FC = () => {
           }, 1200);
         } else {
           setStatus('error');
-          setError(result.error || 'Erreur inconnue');
+          setError(result.error || 'Erreur lors de la tentative de rejoindre le groupe.');
         }
       }
     };
     tryJoin();
-  }, [user, code, navigate, refreshUser]);
+  }, [user, code, refreshUser, navigate]);
 
   if (!user) {
     return (

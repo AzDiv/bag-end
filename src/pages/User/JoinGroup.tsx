@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
 import { useAuthStore } from '../../store/authStore';
-import { supabase, joinGroupAsExistingUser } from '../../lib/supabase';
+import { joinGroupAsExistingUser } from '../../lib/supabase';
+
+// Utility to fetch member groups from your backend API
+async function fetchMemberGroupsFromApi(userId: string, token: string) {
+  const res = await fetch(`http://localhost:3000/api/invites/member-groups?userId=${userId}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if (!res.ok) throw new Error('Erreur lors du chargement des groupes');
+  const { groups } = await res.json();
+  return groups;
+}
 
 const JoinGroup: React.FC = () => {
   const { user, refreshUser } = useAuthStore();
@@ -15,22 +25,13 @@ const JoinGroup: React.FC = () => {
     const fetchMemberGroups = async () => {
       if (!user) return;
       setFetchingGroups(true);
-      // Find all groups where user is a member (via invites), but not owner
-      const { data, error } = await supabase
-        .from('invites')
-        .select('group_id, groups:group_id(id, code, group_number, owner_id)')
-        .eq('referred_user_id', user.id)
-        .neq('groups.owner_id', user.id); // Only groups where user is not owner
-      if (!error && data) {
-        // Remove duplicates (if any)
-        const uniqueGroups = Array.from(
-          new Map(
-            data
-              .filter((row: any) => row.groups)
-              .map((row: any) => [row.groups.id, row.groups])
-          ).values()
-        );
-        setMemberGroups(uniqueGroups);
+      try {
+        const token = localStorage.getItem('jwt_token');
+        if (!token) throw new Error('Token manquant');
+        const groups = await fetchMemberGroupsFromApi(user.id, token);
+        setMemberGroups(groups);
+      } catch (e: any) {
+        setJoinError(e.message || 'Erreur lors du chargement des groupes');
       }
       setFetchingGroups(false);
     };
@@ -49,28 +50,20 @@ const JoinGroup: React.FC = () => {
       setJoinError('Veuillez entrer un code de groupe.');
       return;
     }
-    const result = await joinGroupAsExistingUser(user.id, groupInput.trim());
+    const token = localStorage.getItem('jwt_token');
+    const result = await joinGroupAsExistingUser(user.id, groupInput.trim(), token!);
     if (!result.success) setJoinError(result.error || 'Erreur inconnue');
     else {
       setJoinSuccess('Demande envoyée ou groupe rejoint !');
       setGroupInput('');
       await refreshUser();
       setTimeout(() => setJoinSuccess(''), 2000);
-      // Refresh the list
-      const { data, error } = await supabase
-        .from('invites')
-        .select('group_id, groups:group_id(id, code, group_number, owner_id)')
-        .eq('referred_user_id', user.id)
-        .neq('groups.owner_id', user.id); // Only groups where user is not owner
-      if (!error && data) {
-        const uniqueGroups = Array.from(
-          new Map(
-            data
-              .filter((row: any) => row.groups)
-              .map((row: any) => [row.groups.id, row.groups])
-          ).values()
-        );
-        setMemberGroups(uniqueGroups);
+      // Refresh the list from backend
+      try {
+        const groups = await fetchMemberGroupsFromApi(user.id, token!);
+        setMemberGroups(groups);
+      } catch (e: any) {
+        setJoinError(e.message || 'Erreur lors du rafraîchissement des groupes');
       }
     }
   };

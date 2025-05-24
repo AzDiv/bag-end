@@ -9,7 +9,7 @@ import ShareModal from '../../components/UI/ShareModal';
 import JoinGroupModal from '../../components/UI/JoinGroupModal';
 import { getUserWithGroups, joinGroupAsExistingUser } from '../../lib/supabase';
 import { UserWithGroupDetails, Group } from '../../types/database.types';
-import { AlertCircle, InfoIcon, CheckCircle, Link2, AlertTriangle } from 'lucide-react';
+import { AlertCircle, InfoIcon, AlertTriangle, Link2 } from 'lucide-react';
 import PaymentInstructions from '../../components/UI/PaymentInstruction'; 
 
 const Dashboard: React.FC = () => {
@@ -20,48 +20,39 @@ const Dashboard: React.FC = () => {
   const [selectedGroupCode, setSelectedGroupCode] = useState('');
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [joinError, setJoinError] = useState('');
-  
+
   useEffect(() => {
     const fetchUserData = async () => {
       if (user) {
         setLoading(true);
-        const userData = await getUserWithGroups(user.id);
+        // Use backend API and pass JWT token
+        const token = localStorage.getItem('jwt_token');
+        const userData = await getUserWithGroups(user.id, token!);
         setUserData(userData);
         setLoading(false);
       }
     };
-    
     fetchUserData();
   }, [user]);
-  
-  useEffect(() => {
-    // Remove or increase the interval duration
-    // Or remove this effect entirely if not needed
-    // const interval = setInterval(() => {
-    //   refreshUser();
-    // }, 60000); // every minute
 
-    // return () => clearInterval(interval);
-  }, [refreshUser]);
-  
   const handleShareGroup = (groupCode: string) => {
     setSelectedGroupCode(groupCode);
     setShareModalOpen(true);
   };
-  
+
   const handleJoinGroup = async (groupCode: string) => {
     setJoinError('');
     if (!user) return { success: false, error: 'Utilisateur non connecté.' };
-    const result = await joinGroupAsExistingUser(user.id, groupCode);
+    const token = localStorage.getItem('jwt_token');
+    const result = await joinGroupAsExistingUser(user.id, groupCode, token!);
     if (!result.success) setJoinError(result.error || 'Erreur inconnue');
     else {
-      // Optionally refresh user data after joining
       await refreshUser();
       setTimeout(() => setShowJoinModal(false), 1200);
     }
     return result;
   };
-  
+
   // Show plan selection if user hasn't selected a plan yet
   if (user && !user.pack_type) {
     return (
@@ -81,7 +72,7 @@ const Dashboard: React.FC = () => {
       </DashboardLayout>
     );
   }
-  
+
   // Show pending verification message if user has selected a plan but is not yet verified
   if (user && user.pack_type && user.status === 'pending') {
     return (
@@ -174,7 +165,7 @@ const Dashboard: React.FC = () => {
       </DashboardLayout>
     );
   }
-  
+
   // Show main dashboard for verified users
   return (
     <DashboardLayout>
@@ -268,9 +259,6 @@ const Dashboard: React.FC = () => {
             errorMessage={joinError}
           />
         )}
-        
-        {/* Add Join Group button for logged-in users */}
-
       </div>
     </DashboardLayout>
   );

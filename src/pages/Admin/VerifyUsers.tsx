@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
 import PendingUsersTable from '../../components/Admin/PendingUsersTable';
-import { getPendingVerifications, updateUserStatus, getUserById, createNextGroupIfEligible, supabase } from '../../lib/supabase';
+import { getPendingVerifications, updateUserStatus, getUserById, createNextGroupIfEligible } from '../../lib/supabase';
 import toast from 'react-hot-toast';
 
 const VerifyUsers: React.FC = () => {
@@ -13,7 +13,8 @@ const VerifyUsers: React.FC = () => {
     const fetchPending = async () => {
       setLoading(true);
       try {
-        const users = await getPendingVerifications();
+        const token = localStorage.getItem('jwt_token');
+        const users = await getPendingVerifications(token!);
         setPendingUsers(users);
       } catch (e) {
         toast.error('Échec du chargement des utilisateurs en attente');
@@ -27,20 +28,18 @@ const VerifyUsers: React.FC = () => {
   const handleVerification = async (userId: string, status: 'active' | 'rejected') => {
     setProcessingIds(prev => new Set(prev).add(userId));
     try {
-      const success = await updateUserStatus(userId, status);
-      if (success) {
+      const token = localStorage.getItem('jwt_token');
+      const result = await updateUserStatus(userId, status, token!);
+      if (result.success) {
         setPendingUsers(prev => prev.filter(u => u.id !== userId));
         toast.success(`Utilisateur ${status === 'active' ? 'vérifié' : 'rejeté'} avec succès`);
         if (status === 'active') {
-          const user = await getUserById(userId);
+          const token = localStorage.getItem('jwt_token');
+          const user = await getUserById(userId, token!);
           if (user?.invite_code) {
-            const { data: group } = await supabase
-              .from('groups')
-              .select('owner_id')
-              .eq('code', user.invite_code)
-              .single();
-            if (group?.owner_id) {
-              await createNextGroupIfEligible(group.owner_id);
+            const groupOwnerId = await getUserById(user.invite_code, token!);
+            if (groupOwnerId) {
+              await createNextGroupIfEligible(groupOwnerId, token!);
             }
           }
         }

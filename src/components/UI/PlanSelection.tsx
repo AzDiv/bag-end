@@ -12,12 +12,18 @@ const PlanSelection: React.FC = () => {
     setLoading(true);
     
     try {
+      if (!user || !user.id) {
+        toast.error('Veuillez vous connecter pour sélectionner un plan');
+        setLoading(false);
+        return;
+      }
+      
       const { success, error } = await selectPlan(packType);
       
       if (success) {
         toast.success(`${packType.charAt(0).toUpperCase() + packType.slice(1)} sélectionné !`);
       } else {
-        throw new Error(error);
+        throw new Error(error || 'Échec de la sélection du plan');
       }
     } catch (error) {
       toast.error((error as Error).message || 'Échec de la sélection du plan');
