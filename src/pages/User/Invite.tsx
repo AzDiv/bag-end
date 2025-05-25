@@ -18,16 +18,23 @@ const Invite: React.FC = () => {
     const fetchGroups = async () => {
       if (user) {
         setLoading(true);
-        const userData = await getUserWithGroups(user.id);
-        
-        if (userData && userData.groups) {
-          setGroups(userData.groups);
-          
-          if (userData.groups.length > 0) {
-            setSelectedGroup(userData.groups[userData.groups.length - 1]);
-          }
+        const token = localStorage.getItem('jwt_token');
+        if (!token) {
+          setLoading(false);
+          return;
         }
-        
+        const userData = await getUserWithGroups(user.id, token);
+        // Accept both { groups: [...] } and { user: { groups: [...] } }
+        let groupsArr = [];
+        if (userData && Array.isArray(userData.groups)) {
+          groupsArr = userData.groups;
+        } else if (userData && userData.user && Array.isArray(userData.user.groups)) {
+          groupsArr = userData.user.groups;
+        }
+        setGroups(groupsArr);
+        if (groupsArr.length > 0) {
+          setSelectedGroup(groupsArr[groupsArr.length - 1]);
+        }
         setLoading(false);
       }
     };

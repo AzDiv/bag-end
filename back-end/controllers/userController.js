@@ -17,10 +17,10 @@ exports.getUserById = async (req, res) => {
       'SELECT id, name, email, role, referred_by, invite_code, pack_type, status, current_level, created_at, whatsapp FROM users WHERE id = ? LIMIT 1',
       [id]
     );
-    if (rows.length === 0) return res.status(404).json({ error: 'User not found' });
-    res.json(rows[0]);
+    if (rows.length === 0) return res.status(404).json({ success: false, error: 'User not found' });
+    res.json({ success: true, user: rows[0] });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, error: err.message });
   }
 };
 
@@ -88,7 +88,7 @@ exports.getUserWithGroups = async (req, res) => {
   try {
     // Get user
     const [userRows] = await pool.query('SELECT * FROM users WHERE id = ? LIMIT 1', [id]);
-    if (userRows.length === 0) return res.status(404).json({ error: 'User not found' });
+    if (userRows.length === 0) return res.status(404).json({ success: false, error: 'User not found' });
     const user = userRows[0];
 
     // Get groups owned by user
@@ -110,9 +110,9 @@ exports.getUserWithGroups = async (req, res) => {
       return { ...group, members, verified_members };
     }));
 
-    res.json({ ...user, groups: groupsWithCounts });
+    res.json({ success: true, user: { ...user, groups: groupsWithCounts } });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, error: err.message });
   }
 };
 
@@ -121,11 +121,38 @@ exports.getPendingVerifications = async (req, res) => {
     const [rows] = await pool.query(
       "SELECT id, name, email, role, referred_by, invite_code, pack_type, status, current_level, created_at, whatsapp FROM users WHERE status = 'pending' ORDER BY created_at DESC"
     );
-    res.json(rows);
+    res.json({ success: true, users: rows });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, error: err.message });
   }
 };
+
+// Helper to generate a random 6-character group code
+function generateGroupCode() {
+  const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let result = '';
+  for (let i = 0; i < 6; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
+
+// Create a group for a user if eligible (after verification and owner_confirmed)
+async function createGroupIfNeeded(userId) {
+  // Check user status
+  const [[user]] = await pool.query('SELECT status FROM users WHERE id = ?', [userId]);
+  if (!user || user.status !== 'active') return;
+
+  // Check invite owner_confirmed
+  const [[invite]] = await pool.query('SELECT owner_confirmed FROM invites WHERE referred_user_id = ?', [userId]);
+  if (!invite || invite.owner_confirmed !== 1) return;
+
+  // Check if user already owns a group
+  const [groups] = await pool.query('SELECT id FROM groups WHERE owner_id = ?', [userId]);
+  if (groups.length === 0) {
+    await pool.query('INSERT INTO groups (owner_id, code, group_number) VALUES (?, ?, ?)', [userId, generateGroupCode(), 1]);
+  }
+}
 
 exports.updateUserStatus = async (req, res) => {
   const { id } = req.params;
@@ -135,7 +162,10 @@ exports.updateUserStatus = async (req, res) => {
   }
   try {
     await pool.query('UPDATE users SET status = ? WHERE id = ?', [status, id]);
-    // Optionally: call createGroupIfNeeded if status === 'active'
+    // Create group if user is now active and owner_confirmed
+    if (status === 'active') {
+      await createGroupIfNeeded(id);
+    }
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -173,7 +203,15 @@ exports.patchUserProfile = async (req, res) => {
     const setClause = Object.keys(updates).map(f => `${f} = ?`).join(', ');
     const values = [...Object.values(updates), id];
     await pool.query(`UPDATE users SET ${setClause} WHERE id = ?`, values);
-    res.json({ success: true });
+    // Return updated user
+    const [rows] = await pool.query(
+      'SELECT id, name, email, role, referred_by, invite_code, pack_type, status, current_level, created_at, whatsapp FROM users WHERE id = ? LIMIT 1',
+      [id]
+    );
+    if (rows.length === 0) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+    res.json({ success: true, user: rows[0] });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -192,7 +230,7 @@ exports.getCurrentUser = async (req, res) => {
     if (rows.length === 0) {
       return res.status(404).json({ success: false, error: 'User not found' });
     }
-    res.json(rows[0]);
+    res.json({ success: true, user: rows[0] });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

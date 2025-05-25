@@ -95,7 +95,7 @@ exports.confirmGroupMember = async (req, res) => {
 // Internal helper for group creation logic (used by confirmGroupMember)
 exports.createGroupIfNeededInternal = async (userId) => {
   // 1. Fetch user status
-  const [[user]] = await pool.query('SELECT status FROM users WHERE id = ?', [userId]);
+  const [[user]] = await pool.query('SELECT status, current_level FROM users WHERE id = ?', [userId]);
   if (!user || user.status !== 'active') return false;
   // 2. Fetch invite for owner_confirmed
   const [[invite]] = await pool.query('SELECT owner_confirmed FROM invites WHERE referred_user_id = ?', [userId]);
@@ -106,6 +106,25 @@ exports.createGroupIfNeededInternal = async (userId) => {
   // 4. Create group_number 1
   const code = generateGroupCode();
   await pool.query('INSERT INTO groups (owner_id, code, group_number) VALUES (?, ?, 1)', [userId, code]);
+
+  // 5. After group creation, check for auto-increment for all levels (1, 2, ...)
+  // Get all groups for user, sorted by group_number
+  const [allGroups] = await pool.query('SELECT * FROM groups WHERE owner_id = ? ORDER BY group_number ASC', [userId]);
+  for (const group of allGroups) {
+    // Count verified & owner_confirmed members in this group
+    const [[verifiedRow]] = await pool.query(`
+      SELECT COUNT(*) as count
+      FROM invites i
+      JOIN users u ON i.referred_user_id = u.id
+      WHERE i.group_id = ? AND i.owner_confirmed = 1 AND u.status = 'active'
+    `, [group.id]);
+    if ((verifiedRow.count ?? 0) >= 4) {
+      // Increment user level if at this group_number
+      if (user.current_level === group.group_number) {
+        await pool.query('UPDATE users SET current_level = ? WHERE id = ?', [group.group_number + 1, userId]);
+      }
+    }
+  }
   return true;
 };
 
@@ -148,6 +167,13 @@ exports.createNextGroupIfEligibleInternal = async (userId) => {
     WHERE i.group_id = ? AND i.owner_confirmed = 1 AND u.status = 'active'
   `, [lastGroup.id]);
   if ((verifiedRow.count ?? 0) < 4) return false;
+
+  // Add this: Update user's level if they've reached 4 verified members
+  const [[user]] = await pool.query('SELECT current_level FROM users WHERE id = ?', [userId]);
+  if (user && user.current_level === lastGroup.group_number) {
+    await pool.query('UPDATE users SET current_level = ? WHERE id = ?', [nextGroupNumber, userId]);
+  }
+
   // 3. Check if next group already exists
   if (groups.some(g => g.group_number === nextGroupNumber)) return false;
   // 4. Only create next group if user is confirmed as member in a group at this level
@@ -209,9 +235,10 @@ exports.joinGroupAsExistingUser = async (req, res) => {
     }
 
     // 6. Insert invite (do not update user's invite_code or referred_by)
+    // Always set inviter_id to group.owner_id
     await pool.query(
       'INSERT INTO invites (group_id, inviter_id, referred_user_id, owner_confirmed) VALUES (?, ?, ?, ?)',
-      [group.id, null, user.id, 0]
+      [group.id, group.owner_id, user.id, 0]
     );
 
     res.json({ success: true });

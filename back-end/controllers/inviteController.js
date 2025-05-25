@@ -1,4 +1,5 @@
 const pool = require('../models/db');
+const userController = require('./userController');
 
 exports.getAllInvites = async (req, res) => {
   try {
@@ -44,6 +45,18 @@ exports.updateInvite = async (req, res) => {
       'UPDATE invites SET group_id=?, inviter_id=?, referred_user_id=?, owner_confirmed=? WHERE id=?',
       [group_id, inviter_id, referred_user_id, owner_confirmed, id]
     );
+    // If owner_confirmed is being set to 1, trigger group creation logic
+    if (owner_confirmed === 1 || owner_confirmed === true || owner_confirmed === '1') {
+      // If referred_user_id is not provided in body, fetch it from DB
+      let referredUserId = referred_user_id;
+      if (!referredUserId) {
+        const [[invite]] = await pool.query('SELECT referred_user_id FROM invites WHERE id = ?', [id]);
+        referredUserId = invite?.referred_user_id;
+      }
+      if (referredUserId) {
+        await userController.createGroupIfNeeded(referredUserId);
+      }
+    }
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -55,6 +68,31 @@ exports.deleteInvite = async (req, res) => {
   try {
     await pool.query('DELETE FROM invites WHERE id = ?', [id]);
     res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+// Get all groups where user is a member (via invites), but not owner
+exports.getMemberGroups = async (req, res) => {
+  let userId = req.query.userId;
+  if (!userId) {
+    return res.status(400).json({ success: false, error: 'userId is required' });
+  }
+  // Ensure userId is an integer for MySQL INT columns
+  userId = parseInt(userId, 10);
+  if (isNaN(userId)) {
+    return res.status(400).json({ success: false, error: 'Invalid userId' });
+  }
+  try {
+    const [rows] = await pool.query(`
+      SELECT g.id, g.code, g.group_number, g.owner_id
+      FROM invites i
+      JOIN groups g ON i.group_id = g.id
+      WHERE i.referred_user_id = ? AND g.owner_id != ? AND i.owner_confirmed = 1
+      GROUP BY g.id
+    `, [userId, userId]);
+    res.json({ success: true, groups: rows });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

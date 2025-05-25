@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const mysql = require('mysql2/promise');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
+const { authenticateToken } = require('./middleware/auth');
 
 // MySQL connection pool
 const pool = mysql.createPool({
@@ -10,6 +12,8 @@ const pool = mysql.createPool({
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DATABASE,
 });
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Registration endpoint
 router.post('/register', async (req, res) => {
@@ -24,11 +28,22 @@ router.post('/register', async (req, res) => {
       return res.status(409).json({ success: false, error: 'User already exists' });
     }
     // Insert user (password should be hashed in production)
-    await pool.query(
+    const [result] = await pool.query(
       'INSERT INTO users (name, email, password, status, current_level, whatsapp) VALUES (?, ?, ?, ?, ?, ?)',
       [name, email, password, 'pending', 1, whatsapp || null]
     );
-    res.json({ success: true });
+    // Fetch the new user
+    const [users] = await pool.query('SELECT * FROM users WHERE id = ?', [result.insertId]);
+    const user = users[0];
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: user.id, email: user.email, name: user.name },
+      JWT_SECRET,
+      { expiresIn: '2h' }
+    );
+    // Never return password
+    delete user.password;
+    res.json({ success: true, token, user });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -89,6 +104,21 @@ router.post('/invites/confirm', async (req, res) => {
   try {
     await pool.query('UPDATE invites SET owner_confirmed = 1 WHERE id = ?', [invite_id]);
     res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Get current user from JWT token
+router.get('/me', authenticateToken, async (req, res) => {
+  try {
+    const [users] = await pool.query('SELECT * FROM users WHERE id = ?', [req.user.id]);
+    if (users.length === 0) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+    const user = users[0];
+    delete user.password;
+    res.json({ success: true, user });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

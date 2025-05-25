@@ -14,8 +14,8 @@ const VerifyUsers: React.FC = () => {
       setLoading(true);
       try {
         const token = localStorage.getItem('jwt_token');
-        const users = await getPendingVerifications(token!);
-        setPendingUsers(users);
+        const result = await getPendingVerifications(token!);
+        setPendingUsers(result.users || []);
       } catch (e) {
         toast.error('Échec du chargement des utilisateurs en attente');
       } finally {

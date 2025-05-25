@@ -15,6 +15,8 @@ interface AuthState {
   refreshUser: () => Promise<void>;
   initialize: () => Promise<void>;
   getGroupMembers: (groupId: string) => Promise<{ success: boolean; members?: any; error?: string }>; 
+  setUser: (user: User | null) => void;
+  setToken: (token: string | null) => void;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -24,20 +26,21 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   initialized: false,
 
   initialize: async () => {
-    // Try to load token from localStorage
     const token = localStorage.getItem('jwt_token');
     if (!token) {
-      set({ loading: false, initialized: true });
+      set({ user: null, token: null, loading: false, initialized: true });
       return;
     }
     try {
-      // Get user info from backend
-      // Assume userId is encoded in JWT, or backend returns user info
-      // You may want to decode JWT to get userId, or have a /me endpoint
-      const user = await api.getUserMe(token); // Implement getUserMe in api client if needed
-      set({ user, token, loading: false, initialized: true });
-    } catch (error) {
-      set({ loading: false, initialized: true, user: null, token: null });
+      const result = await api.getUserMe(token);
+      if (result.success && result.user) {
+        set({ user: result.user, token, loading: false, initialized: true });
+      } else {
+        set({ user: null, token: null, loading: false, initialized: true });
+        localStorage.removeItem('jwt_token');
+      }
+    } catch {
+      set({ user: null, token: null, loading: false, initialized: true });
       localStorage.removeItem('jwt_token');
     }
   },
@@ -60,7 +63,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       if (result.success && result.token && result.user) {
         set({ user: result.user, token: result.token, loading: false });
         localStorage.setItem('jwt_token', result.token);
-        return { success: true };
+        return { success: true, token: result.token, user: result.user }; // <-- Return token and user!
       } else {
         set({ loading: false });
         return { success: false, error: result.error || 'Registration failed.' };
@@ -137,5 +140,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     } catch (error: any) {
       return { success: false, error: error.message || 'Could not fetch group members.' };
     }
-  }
+  },
+
+  setUser: (user) => set({ user }),
+  setToken: (token) => set({ token }),
 }));

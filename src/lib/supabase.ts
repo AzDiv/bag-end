@@ -10,7 +10,6 @@ async function apiCall(endpoint: string, method: string = 'GET', data?: any, tok
   const options: RequestInit = {
     method,
     headers,
-    credentials: 'include' as RequestCredentials,
     ...(data ? { body: JSON.stringify(data) } : {})
   };
   const response = await fetch(`${API_URL}${endpoint}`, options);
@@ -72,7 +71,7 @@ export async function joinGroupAsExistingUser(userId: string, groupCode: string,
 }
 
 export async function getUserMe(token: string) {
-  return apiCall('/users/me', 'GET', undefined, token);
+  return apiCall('/me', 'GET', undefined, token);
 }
 
 export async function registerUser(email: string, password: string, name: string, inviteCode?: string, whatsapp?: string) {
@@ -92,5 +91,5 @@ export async function selectPlan(userId: string, packType: 'starter' | 'gold', t
 }
 
 export async function getAllUsers(token: string) {
-  return apiCall('/admin/users', 'GET', undefined, token);
+  return apiCall('/users', 'GET', undefined, token);
 }

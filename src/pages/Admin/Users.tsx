@@ -37,13 +37,16 @@ const Users: React.FC = () => {
         let users: UserRow[] = [];
         if (token) {
           const result = await getAllUsers(token);
-          if (result.success && Array.isArray(result.users)) {
+          // Accept both array and object with users property
+          if (Array.isArray(result)) {
+            users = result;
+          } else if (result && Array.isArray(result.users)) {
             users = result.users;
           }
         }
-        setUsers(users || []);
+        setUsers(users);
       } catch (e) {
-        // Optionally use toast here
+        setUsers([]);
       } finally {
         setLoading(false);
       }

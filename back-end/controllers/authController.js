@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const pool = require('../models/db');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Login handler
 async function login(req, res) {
@@ -79,20 +79,19 @@ async function register(req, res) {
       [name, email, hashedPassword, groupCodeUsed || null, inviterId, whatsapp || null, 'pending', 1, 'user']
     );
     const userId = result.insertId;
-    // If group invite was used, create an invite record only if not already present
+    // After user creation
+    const [userRows] = await pool.query('SELECT * FROM users WHERE id = ?', [userId]);
+    const user = userRows[0];
+    // If registration used a valid invite code, insert invite row for this user
     if (groupId && inviterId) {
-      const [[existingInvite]] = await pool.query(
-        'SELECT id FROM invites WHERE group_id = ? AND referred_user_id = ?',
-        [groupId, userId]
+      await pool.query(
+        'INSERT INTO invites (group_id, inviter_id, referred_user_id, owner_confirmed) VALUES (?, ?, ?, ?)',
+        [groupId, inviterId, userId, 0]
       );
-      if (!existingInvite) {
-        await pool.query(
-          'INSERT INTO invites (group_id, inviter_id, referred_user_id, owner_confirmed) VALUES (?, ?, ?, ?)',
-          [groupId, inviterId, userId, false]
-        );
-      }
     }
-    res.json({ success: true, userId });
+    const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '2h' });
+
+    res.json({ success: true, token, user: { ...user, password: undefined } });
   } catch (err) {
     // Enhanced error logging for debugging
     console.error('Registration error:', {

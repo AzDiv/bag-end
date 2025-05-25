@@ -23,7 +23,7 @@ const JoinGroup: React.FC = () => {
 
   useEffect(() => {
     const fetchMemberGroups = async () => {
-      if (!user) return;
+      if (!user || !user.id) return; // Only fetch if user and user.id are defined
       setFetchingGroups(true);
       try {
         const token = localStorage.getItem('jwt_token');

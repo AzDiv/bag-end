@@ -25,16 +25,28 @@ const Groups: React.FC = () => {
     const fetchGroups = async () => {
       if (user) {
         setLoading(true);
-        const userData = await getUserWithGroups(user.id);
-        if (userData && userData.groups) {
-          setGroups(userData.groups);
-          // Always select the latest group by default if none is selected or if the selected group is gone
-          if (
-            userData.groups.length > 0 &&
-            (!selectedGroup || !userData.groups.some((g: GroupType) => g.id === selectedGroup))
-          ) {
-            setSelectedGroup(userData.groups[userData.groups.length - 1].id);
-          }
+        const token = localStorage.getItem('jwt_token');
+        if (!token) {
+          // Handle missing token: show error, redirect, or return
+          console.error('No JWT token found. User may need to log in again.');
+          setLoading(false);
+          return;
+        }
+        const userData = await getUserWithGroups(user.id, token);
+        // Accept both { user: { groups: [...] } } and { groups: [...] }
+        let groupsArr = [];
+        if (userData && Array.isArray(userData.groups)) {
+          groupsArr = userData.groups;
+        } else if (userData && userData.user && Array.isArray(userData.user.groups)) {
+          groupsArr = userData.user.groups;
+        }
+        setGroups(groupsArr);
+        // Always select the latest group by default if none is selected or if the selected group is gone
+        if (
+          groupsArr.length > 0 &&
+          (!selectedGroup || !groupsArr.some((g: GroupType) => g.id === selectedGroup))
+        ) {
+          setSelectedGroup(groupsArr[groupsArr.length - 1].id);
         }
         setLoading(false);
       }
@@ -47,17 +59,21 @@ const Groups: React.FC = () => {
     const fetchMembers = async () => {
       if (selectedGroup) {
         setMembersLoading(true);
-        const groupMembers = await getGroupMembers(selectedGroup);
-        // Map to include owner_confirmed in each member object
-        setMembers(
-          groupMembers
-            .filter(member => member.referred_user !== null)
-            .map(member => ({
-              ...member.referred_user,
-              owner_confirmed: member.owner_confirmed,
-              invite_id: member.id // keep invite id for confirmation
-            }))
-        );
+        const token = localStorage.getItem('jwt_token');
+        if (!token) {
+          console.error('No JWT token found. User may need to log in again.');
+          setMembers([]);
+          setMembersLoading(false);
+          return;
+        }
+        const groupMembersResp = await getGroupMembers(selectedGroup, token);
+        let groupMembers = [];
+        if (groupMembersResp && Array.isArray(groupMembersResp)) {
+          groupMembers = groupMembersResp;
+        } else if (groupMembersResp && Array.isArray(groupMembersResp.members)) {
+          groupMembers = groupMembersResp.members;
+        }
+        setMembers(groupMembers);
         setMembersLoading(false);
       }
     };
@@ -71,20 +87,29 @@ const Groups: React.FC = () => {
   };
 
   // Handler to fetch member info and open modal
-  const handleMemberClick = async (memberId: string) => {
-    setMemberInfoLoading(true);
-    const memberInfo = await getUserById(memberId);
-    setSelectedMember(memberInfo);
+  const handleMemberClick = (member: any) => {
+    if (!member || !member.id) {
+      console.error('handleMemberClick called with undefined member or member.id');
+      setSelectedMember(null);
+      setMemberInfoLoading(false);
+      return;
+    }
+    setSelectedMember(member);
     setMemberInfoLoading(false);
   };
 
   // Handler to confirm a member and trigger group progression
   const handleConfirmMember = async (inviteId: string) => {
     if (!user) return;
-    await confirmGroupMember(inviteId);
-    await createNextGroupIfEligible(user.id);
+    const token = localStorage.getItem('jwt_token');
+    if (!token) {
+      console.error('No JWT token found. User may need to log in again.');
+      return;
+    }
+    await confirmGroupMember(inviteId, token);
+    await createNextGroupIfEligible(user.id, token);
     // Refresh group and member state
-    const userData = await getUserWithGroups(user.id);
+    const userData = await getUserWithGroups(user.id, token);
     if (userData && userData.groups) {
       setGroups(userData.groups);
       if (
@@ -95,16 +120,8 @@ const Groups: React.FC = () => {
       }
     }
     if (selectedGroup) {
-      const groupMembers = await getGroupMembers(selectedGroup);
-      setMembers(
-        groupMembers
-          .filter((member: any) => member.referred_user !== null)
-          .map((member: any) => ({
-            ...member.referred_user,
-            owner_confirmed: member.owner_confirmed,
-            invite_id: member.id
-          }))
-      );
+      const groupMembers = await getGroupMembers(selectedGroup, token);
+      setMembers(groupMembers);
     }
   };
 
@@ -224,7 +241,7 @@ const Groups: React.FC = () => {
                                   key={member.id}
                                   className="absolute flex flex-col items-center"
                                   style={{ left: `${x}px`, top: `${y}px` }}
-                                  onClick={() => handleMemberClick(member.id)}
+                                  onClick={() => handleMemberClick(member)}
                                 >
                                   <div className={`w-18 h-18 rounded-full flex items-center justify-center shadow-md border-4 ${member.owner_confirmed ? 'border-green-400 bg-green-50' : member.status === 'rejected' ? 'border-red-400 bg-red-50' : 'border-gray-300 bg-gray-100'} cursor-pointer hover:scale-105 transition-transform`}>
                                     <Users className={`h-8 w-8 ${member.owner_confirmed ? 'text-green-600' : member.status === 'rejected' ? 'text-red-500' : 'text-gray-500'}`} />

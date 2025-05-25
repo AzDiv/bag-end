@@ -13,6 +13,7 @@ router.post('/auth/register', require('../controllers/authController').register)
 
 // --- User routes ---
 router.get('/users', authenticateToken, requireAdmin, userController.getAllUsers);
+router.get('/users/pending', authenticateToken, requireAdmin, userController.getPendingVerifications);
 router.get('/users/:id', authenticateToken, userController.getUserById);
 router.post('/users',
   [
@@ -39,6 +40,7 @@ router.get('/users/pending', authenticateToken, requireAdmin, userController.get
 router.put('/users/:id/plan', authenticateToken, userController.updateUserPlan);
 router.patch('/users/:id', authenticateToken, userController.patchUserProfile);
 router.get('/users/me', authenticateToken, userController.getCurrentUser);
+router.get('/me', authenticateToken, userController.getCurrentUser);
 
 // --- Group routes ---
 router.get('/groups', authenticateToken, requireAdmin, groupController.getAllGroups);
@@ -50,6 +52,7 @@ router.get('/groups/:id/members', authenticateToken, groupController.getGroupMem
 
 // --- Invite routes ---
 router.get('/invites', authenticateToken, requireAdmin, inviteController.getAllInvites);
+router.get('/invites/member-groups', authenticateToken, inviteController.getMemberGroups);
 router.get('/invites/:id', authenticateToken, inviteController.getInviteById);
 router.post('/invites', authenticateToken, inviteController.createInvite);
 router.put('/invites/:id', authenticateToken, inviteController.updateInvite);

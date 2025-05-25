@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 const Register: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { signUp, user } = useAuthStore();
+  const { signUp, user, setUser, setToken } = useAuthStore();
   
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -65,18 +65,13 @@ const Register: React.FC = () => {
     setLoading(true);
     
     try {
-      const { success, error } = await signUp(email, password, name, inviteCode, whatsapp);
-      
-      if (success) {
-        toast.success('Inscription réussie !');
-        const whatsappMessage = encodeURIComponent(
-          `Bonjour, je viens de m'inscrire. Je suis ${name}, mon numéro WhatsApp est ${whatsapp} et mon email est ${email}.`
-        );
-        // Redirection vers WhatsApp avec le message préformaté
-        window.open(`https://wa.me/+33780892557?text=${whatsappMessage}`, '_blank');
-        navigate('/dashboard');
+      const { success, token, user: registeredUser, error } = await signUp(email, password, name, inviteCode, whatsapp);
+      if (success && token && registeredUser) {
+        setUser(registeredUser);
+        setToken(token);
+        navigate('/dashboard'); // Redirect to dashboard (or plan selection)
       } else {
-        throw new Error(error);
+        toast.error(error || 'Échec de l\'inscription');
       }
     } catch (error: any) {
       toast.error(error.message || 'Échec de l\'inscription');

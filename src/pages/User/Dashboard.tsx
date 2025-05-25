@@ -25,10 +25,11 @@ const Dashboard: React.FC = () => {
     const fetchUserData = async () => {
       if (user) {
         setLoading(true);
-        // Use backend API and pass JWT token
         const token = localStorage.getItem('jwt_token');
-        const userData = await getUserWithGroups(user.id, token!);
-        setUserData(userData);
+        // Fetch user with groups from backend
+        const result = await getUserWithGroups(user.id, token!);
+        // Always set as userData, regardless of backend shape
+        setUserData(result && result.user ? result.user : result);
         setLoading(false);
       }
     };
@@ -193,7 +194,12 @@ const Dashboard: React.FC = () => {
                   <div className="px-6 py-5">
                     <div className="grid md:grid-cols-3 gap-6">
                       {[1, 2, 3].map((groupNumber, idx) => {
-                        const group = userData.groups?.find(g => g.group_number === groupNumber);
+                        // Accept both { user: { groups: [...] } } and { groups: [...] }
+                        let groupsArr: any[] = [];
+                        if (userData && Array.isArray(userData.groups)) {
+                          groupsArr = userData.groups;
+                        }
+                        const group = groupsArr.find((g: any) => g.group_number === groupNumber);
                         const packType = user?.pack_type || 'starter';
                         // Define levels and amounts
                         const starterAmounts = ['5$', '10$', '20$'];
@@ -237,7 +243,7 @@ const Dashboard: React.FC = () => {
                 </div>
                 
                 {/* Progress Stats */}
-                <ProgressStats user={userData} />
+                {userData && <ProgressStats user={userData} />}
 
               </div>
             )}

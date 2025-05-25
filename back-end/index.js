@@ -18,8 +18,6 @@ const pool = mysql.createPool({
   database: process.env.MYSQL_DATABASE,
 });
 
-const JWT_SECRET = process.env.JWT_SECRET || 'changeme';
-
 // Setup morgan for HTTP request logging
 app.use(morgan('combined'));
 
@@ -42,7 +40,7 @@ app.use(cors({
   credentials: true
 }));
 
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.send('API is running');
 });
 
