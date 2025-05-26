@@ -148,6 +148,12 @@ const Login: React.FC = () => {
             Inscrivez-vous
           </Link>
         </div>
+
+        <div className="text-sm text-center">
+          <Link to="/forgot-password" className="text-primary hover:underline">
+            Mot de passe oublié ?
+          </Link>
+        </div>
       </motion.form>
     </AuthLayout>
   );

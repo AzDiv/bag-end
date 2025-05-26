@@ -9,13 +9,24 @@ const GroupsRepair: React.FC = () => {
 
   const handleCheckMissingGroups = async () => {
     setCheckingMissing(true);
-    const result = await findUsersMissingNextGroup();
+    const token = localStorage.getItem('jwt_token');
+    if (!token) {
+      toast.error('Token manquant. Veuillez vous reconnecter.');
+      setCheckingMissing(false);
+      return;
+    }
+    const result = await findUsersMissingNextGroup(token);
     setMissingGroups(result);
     setCheckingMissing(false);
   };
 
   const handleFixGroup = async (userId: string) => {
-    await createNextGroupIfEligible(userId);
+    const token = localStorage.getItem('jwt_token');
+    if (!token) {
+      toast.error('Token manquant. Veuillez vous reconnecter.');
+      return;
+    }
+    await createNextGroupIfEligible(userId, token);
     toast.success('Nouveau groupe créé (si éligible)');
     handleCheckMissingGroups();
   };

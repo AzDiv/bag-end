@@ -129,26 +129,35 @@ const GroupCard: React.FC<GroupCardProps> = ({
       </div>
       
       <div className="px-6 py-4 bg-secondary/10 flex justify-between">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => onShareLink(group.code)}
-          className="flex items-center px-3 py-2 text-sm text-text-primary bg-card border border-secondary rounded-md hover:bg-secondary-light transition-colors"
-        >
-          <Share2 className="h-4 w-4 mr-1" />
-          Share
-        </motion.button>
-        
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={copyInviteLink}
-          className={`px-4 py-2 text-sm text-white rounded-md transition-colors ${
-            packType === 'gold' ? 'bg-amber-500 hover:bg-amber-600' : 'bg-primary hover:bg-primary-dark'
-          }`}
-        >
-          Copier le lien d’invitation
-        </motion.button>
+        {isCompleted ? (
+          <div className="w-full flex items-center justify-center text-success gap-2">
+            <span className="font-semibold">Groupe complet</span>
+            <Award className="h-5 w-5 text-success" />
+          </div>
+        ) : (
+          <>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => onShareLink(group.code)}
+              className="flex items-center px-3 py-2 text-sm text-text-primary bg-card border border-secondary rounded-md hover:bg-secondary-light transition-colors"
+            >
+              <Share2 className="h-4 w-4 mr-1" />
+              Share
+            </motion.button>
+            
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={copyInviteLink}
+              className={`px-4 py-2 text-sm text-white rounded-md transition-colors ${
+                packType === 'gold' ? 'bg-amber-500 hover:bg-amber-600' : 'bg-primary hover:bg-primary-dark'
+              }`}
+            >
+              Copier le lien d’invitation
+            </motion.button>
+          </>
+        )}
       </div>
     </motion.div>
   );

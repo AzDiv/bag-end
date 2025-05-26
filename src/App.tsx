@@ -15,6 +15,8 @@ import VerifyUsers from './pages/Admin/VerifyUsers';
 import GroupsRepair from './pages/Admin/GroupsRepair';
 import Users from './pages/Admin/Users';
 import JoinGroup from './pages/User/JoinGroup';
+import ForgotPassword from './pages/Auth/ForgotPassword';
+import ResetPassword from './pages/Auth/ResetPassword';
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ 
@@ -94,6 +96,8 @@ function App() {
         </ProtectedRoute>
       } />
       <Route path="/join" element={<JoinRedirect />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       {/* Protected User Routes */}
       <Route path="/dashboard" element={

@@ -20,7 +20,7 @@ const Groups: React.FC = () => {
   const [selectedGroupCode, setSelectedGroupCode] = useState('');
   const [selectedMember, setSelectedMember] = useState<any | null>(null);
   const [memberInfoLoading, setMemberInfoLoading] = useState(false);
-
+  console.log(members.map(m => ({ name: m.name, status: m.status })));
   useEffect(() => {
     const fetchGroups = async () => {
       if (user) {
@@ -125,6 +125,63 @@ const Groups: React.FC = () => {
     }
   };
 
+  const renderMember = (member: any, positionClass: string) => (
+    <div
+      className={`absolute ${positionClass} flex flex-col items-center cursor-pointer`}
+      onClick={() => handleMemberClick(member)}
+      key={member.id}
+    >
+      <div
+        className={`w-24 h-24 rounded-lg flex items-center justify-center shadow-md border-4 ${
+          member.owner_confirmed
+            ? 'border-green-400 bg-green-50'
+            : member.status === 'rejected'
+            ? 'border-red-400 bg-red-50'
+            : 'border-gray-300 bg-gray-100'
+        }`}
+      >
+        <Users className={`h-10 w-10 ${
+          member.owner_confirmed
+            ? 'text-green-600'
+            : member.status === 'rejected'
+            ? 'text-red-500'
+            : 'text-gray-500'
+        }`} />
+      </div>
+      <span
+        className="text-sm mt-2 text-gray-700 max-w-[80px] w-20 truncate text-center overflow-hidden whitespace-nowrap block"
+        title={member.name}
+      >
+        {member.name}
+      </span>
+      {member.status === 'rejected' ? (
+        <span className="text-red-500 text-xs font-semibold whitespace-nowrap mt-1 flex items-center">
+          <svg className="h-3 w-3 mr-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 5.636l-12.728 12.728M5.636 5.636l12.728 12.728" />
+          </svg>
+          Rejeté
+        </span>
+      ) : member.owner_confirmed ? null : (
+        user && groups.find(g => g.id === selectedGroup)?.owner_id === user.id && (
+          <button
+            className="mt-1 px-2 py-1 text-xs bg-primary text-white rounded hover:bg-primary-dark whitespace-nowrap"
+            onClick={e => {
+              e.stopPropagation();
+              handleConfirmMember(member.invite_id);
+            }}
+          >
+            Confirmer
+          </button>
+        )
+      )}
+    </div>
+  );
+
+  const mainMembers = [
+    ...members.filter(m => m.status !== 'rejected').slice(0, 4),
+    ...members.filter(m => m.status === 'rejected').slice(0, 4 - members.filter(m => m.status !== 'rejected').length)
+  ];
+
   return (
     <DashboardLayout>
       <div className="max-w-6xl mx-auto py-6">
@@ -217,62 +274,71 @@ const Groups: React.FC = () => {
                         </div>
                       ) : (
                         <div className="flex flex-col items-center py-8">
-                          {/* Circle visualization */}
-                          <div className="relative w-72 h-72">
-                            {/* Owner in center */}
-                            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
-                              <div className="w-24 h-24 rounded-full bg-primary text-white flex flex-col items-center justify-center shadow-lg border-4 border-white">
-                                <Users className="h-10 w-10 mb-1" />
-                                <span className="text-xs font-semibold">Propriétaire</span>
+                          {/* SQUARE GRID visualization */}
+                          <div className="relative w-96 h-96 mx-auto my-8">
+                            {/* Top-left member (corner) */}
+                            {mainMembers[0] && renderMember(mainMembers[0], "top-0 left-0")}
+
+                            {/* Top-right member (corner) */}
+                            {mainMembers[1] && renderMember(mainMembers[1], "top-0 right-0")}
+
+                            {/* Bottom-right member (corner) */}
+                            {mainMembers[2] && renderMember(mainMembers[2], "bottom-0 right-0")}
+
+                            {/* Bottom-left member (corner) */}
+                            {mainMembers[3] && renderMember(mainMembers[3], "bottom-0 left-0")}
+                            {members.length > 4 &&
+  members.slice(4).filter(m => m.status === 'rejected').slice(0, 4).map((member, idx) => {
+    const positions = [
+      "left-1/2 top-0 -translate-x-1/2",      // top of owner
+      "top-1/2 right-0 -translate-y-1/2",     // right of owner
+      "left-1/2 bottom-0 -translate-x-1/2",   // bottom of owner
+      "top-1/2 left-0 -translate-y-1/2",      // left of owner
+    ];
+    return (
+      <div
+        key={member.id}
+        className={`absolute ${positions[idx]} flex flex-col items-center z-20`}
+        onClick={() => handleMemberClick(member)}
+      >
+        <div className="w-12 h-12 rounded-lg flex items-center justify-center shadow-md border-4 border-red-400 bg-red-50">
+          <Users className="h-6 w-6 text-red-500" />
+        </div>
+        <span
+          className="text-xs mt-1 text-red-500 max-w-[60px] w-14 truncate text-center overflow-hidden whitespace-nowrap block"
+          title={member.name}
+        >
+          {member.name}
+          
+        </span>
+        <span className="text-red-500 text-[10px] font-semibold whitespace-nowrap mt-0.5 flex items-center">
+          Rejeté
+        </span>
+      </div>
+    );
+  })
+}
+                            {/* Owner in the center */}
+                            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+                              <div className="w-28 h-28 rounded-lg bg-primary text-white flex flex-col items-center justify-center shadow-lg border-4 border-white">
+                                <Users className="h-12 w-12 mb-1" />
+                                <span className="text-base font-semibold">Propriétaire</span>
                               </div>
                             </div>
-                            {/* Members around in a circle, with extra vertical margin to avoid overlap with owner */}
-                            {members.map((member, idx) => {
-                              const angle = (2 * Math.PI * idx) / members.length;
-                              const radius = 130;
-                              // Add extra margin to avoid overlap with owner (shift up/down if near top/bottom)
-                              let y = 144 + radius * Math.sin(angle) - 36;
-                              // Only adjust if not exactly left or right
-                              if (angle !== 0 && (angle < Math.PI / 2 || angle > 3 * Math.PI / 2)) y -= 18; // top
-                              if (angle !== Math.PI && (angle > Math.PI / 2 && angle < 3 * Math.PI / 2)) y += 18; // bottom
-                              const x = 144 + radius * Math.cos(angle) - 36;
-                              return (
-                                <div
-                                  key={member.id}
-                                  className="absolute flex flex-col items-center"
-                                  style={{ left: `${x}px`, top: `${y}px` }}
-                                  onClick={() => handleMemberClick(member)}
-                                >
-                                  <div className={`w-18 h-18 rounded-full flex items-center justify-center shadow-md border-4 ${member.owner_confirmed ? 'border-green-400 bg-green-50' : member.status === 'rejected' ? 'border-red-400 bg-red-50' : 'border-gray-300 bg-gray-100'} cursor-pointer hover:scale-105 transition-transform`}>
-                                    <Users className={`h-8 w-8 ${member.owner_confirmed ? 'text-green-600' : member.status === 'rejected' ? 'text-red-500' : 'text-gray-500'}`} />
-                                  </div>
-                                  <span className="text-xs mt-1 mb-1 text-gray-700 truncate max-w-[100px] text-center">{member.name}</span>
-                                  {member.status === 'rejected' ? (
-                                    <span className="text-red-500 text-xs font-semibold whitespace-nowrap mt-1 flex items-center">
-                                      <svg className="h-3 w-3 mr-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 5.636l-12.728 12.728M5.636 5.636l12.728 12.728" />
-                                      </svg>
-                                      Rejeté
-                                    </span>
-                                  ) : member.owner_confirmed ? (
-                                    <span className="text-green-500 text-xs font-semibold whitespace-nowrap mt-1">✔ Confirmé</span>
-                                  ) : (
-                                    user && groups.find(g => g.id === selectedGroup)?.owner_id === user.id && (
-                                      <button
-                                        className="mt-1 px-2 py-1 text-xs bg-primary text-white rounded hover:bg-primary-dark whitespace-nowrap"
-                                        onClick={e => {
-                                          e.stopPropagation();
-                                          handleConfirmMember(member.invite_id);
-                                        }}
-                                      >
-                                        Confirmer
-                                      </button>
-                                    )
-                                  )}
-                                </div>
-                              );
-                            })}
                           </div>
+                          {selectedGroup && (
+                            <div className="mt-4 text-gray-600 text-sm text-center">
+                              Créé le :{' '}
+                              {(() => {
+                                const group = groups.find(g => g.id === selectedGroup);
+                                if (group && group.created_at) {
+                                   const date = new Date(group.created_at);
+                                   return date.toLocaleDateString();
+                                }
+                                return 'N/A';
+                              })()}
+                            </div>
+             )}
                           {members.length === 0 && (
                             <div className="text-gray-400 mt-8">Aucun membre dans ce groupe pour le moment. Commencez à inviter des personnes !</div>
                           )}
@@ -306,3 +372,4 @@ const Groups: React.FC = () => {
 };
 
 export default Groups;
+

@@ -124,4 +124,37 @@ router.get('/me', authenticateToken, async (req, res) => {
   }
 });
 
+// Request password reset (no email, returns token)
+router.post('/forgot-password', async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ success: false, error: 'Email required' });
+  try {
+    const [users] = await pool.query('SELECT id FROM users WHERE email = ?', [email]);
+    if (!users.length) return res.status(404).json({ success: false, error: 'User not found' });
+    const crypto = require('crypto');
+    const token = crypto.randomBytes(32).toString('hex');
+    const expires = new Date(Date.now() + 3600 * 1000); // 1 hour
+    await pool.query('UPDATE users SET reset_token=?, reset_token_expires=? WHERE email=?', [token, expires, email]);
+    res.json({ success: true, token });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Reset password with token
+router.post('/reset-password', async (req, res) => {
+  const { token, password } = req.body;
+  if (!token || !password) return res.status(400).json({ success: false, error: 'Missing token or password' });
+  try {
+    const [users] = await pool.query('SELECT id FROM users WHERE reset_token=? AND reset_token_expires > NOW()', [token]);
+    if (!users.length) return res.status(400).json({ success: false, error: 'Invalid or expired token' });
+    const bcrypt = require('bcrypt');
+    const hashed = await bcrypt.hash(password, 10);
+    await pool.query('UPDATE users SET password=?, reset_token=NULL, reset_token_expires=NULL WHERE id=?', [hashed, users[0].id]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;
